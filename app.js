@@ -883,28 +883,6 @@ document.addEventListener("DOMContentLoaded", () => {
             <span class="result-badge" style="background-color: #FEF2F2; color: #EF4444; border: 1px solid #FCA5A5;">Selesai</span>
           </div>
           
-          <div style="padding: 10px 20px 0 20px; display: flex; gap: 10px; align-items: center; justify-content: flex-end;">
-    <button class="btn-export-single-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-      <i data-lucide="download" style="width: 14px; height: 14px; color: #10B981;"></i>
-      Unduh Excel (.xlsx)
-    </button>
-    <button class="btn-export-single-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-      <i data-lucide="printer" style="width: 14px; height: 14px; color: #3B82F6;"></i>
-      Cetak / PDF
-    </button>
-  </div>
-  
-    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px;">
-      <button class="btn-export-ind-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-        <i data-lucide="download" style="width: 14px; height: 14px; color: #10B981;"></i>
-        Unduh Excel Warga Ini (.xlsx)
-      </button>
-      <button class="btn-export-ind-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
-        <i data-lucide="printer" style="width: 14px; height: 14px; color: #3B82F6;"></i>
-        Cetak / PDF Warga Ini
-      </button>
-    </div>
-  
 <!-- Algoritma Comparison Bar -->
           <div style="background-color: var(--bg-light); border-top: 1px solid var(--border); padding: 16px 20px;">
             <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
@@ -1251,36 +1229,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     
-    // Attach Export Listeners for Search Result (Single & Multi)
+    // Attach Export Listeners for Search Result
     const searchCardEl = document.getElementById(cardId);
     if (searchCardEl) {
-      const btnSingleExcel = searchCardEl.querySelector('.btn-export-single-excel');
-      const btnSinglePdf = searchCardEl.querySelector('.btn-export-single-pdf');
-      if (btnSingleExcel && result.warga) {
-        btnSingleExcel.addEventListener('click', (e) => {
-          e.stopPropagation();
-          window.cipabotExportExcel([result.warga], `warga_${result.warga.nama}.xlsx`);
+      // Single warga result (btn-export-single-excel / btn-export-single-pdf)
+      if (result.warga) {
+        searchCardEl.querySelectorAll('.btn-export-single-excel').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (typeof XLSX === 'undefined') { alert('Library XLSX belum dimuat. Refresh halaman dan coba lagi.'); return; }
+            window.cipabotExportExcel([result.warga], `warga_${result.warga.nama}.xlsx`);
+          });
+        });
+        searchCardEl.querySelectorAll('.btn-export-single-pdf').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.cipabotExportPdf(`Biodata Warga - ${result.warga.nama}`, [result.warga]);
+          });
         });
       }
-      if (btnSinglePdf && result.warga) {
-        btnSinglePdf.addEventListener('click', (e) => {
-          e.stopPropagation();
-          window.cipabotExportPdf(`Biodata Warga - ${result.warga.nama}`, [result.warga]);
+      // Multi matches result (btn-export-multi-excel / btn-export-multi-pdf)
+      if (result.matches && result.matches.length > 0) {
+        searchCardEl.querySelectorAll('.btn-export-multi-excel').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (typeof XLSX === 'undefined') { alert('Library XLSX belum dimuat. Refresh halaman dan coba lagi.'); return; }
+            window.cipabotExportExcel(result.matches, `hasil_pencarian_${result.query}.xlsx`);
+          });
         });
-      }
-
-      const btnMultiExcel = searchCardEl.querySelector('.btn-export-multi-excel');
-      const btnMultiPdf = searchCardEl.querySelector('.btn-export-multi-pdf');
-      if (btnMultiExcel && result.matches) {
-        btnMultiExcel.addEventListener('click', (e) => {
-          e.stopPropagation();
-          window.cipabotExportExcel(result.matches, `hasil_pencarian_${result.query}.xlsx`);
-        });
-      }
-      if (btnMultiPdf && result.matches) {
-        btnMultiPdf.addEventListener('click', (e) => {
-          e.stopPropagation();
-          window.cipabotExportPdf(`Hasil Pencarian Warga - ${result.query}`, result.matches);
+        searchCardEl.querySelectorAll('.btn-export-multi-pdf').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            window.cipabotExportPdf(`Hasil Pencarian Warga - ${result.query}`, result.matches);
+          });
         });
       }
     }
@@ -1472,18 +1453,10 @@ document.addEventListener("DOMContentLoaded", () => {
               ${cardTitle}
             </div>
             <div style="display: flex; gap: 6px; align-items: center;">
-    <div style="display: flex; gap: 6px; align-items: center;">
-    <span class="result-badge" style="background-color: ${badgeColor}; color: white;">${badgeLabel}</span>
-    <button class="btn-export-lansia-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
-    <button class="btn-export-lansia-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
-  </div>
-    <button class="btn-export-lansia-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-      📥 Excel
-    </button>
-    <button class="btn-export-lansia-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-      📄 PDF
-    </button>
-  </div>
+              <span class="result-badge" style="background-color: ${badgeColor}; color: white;">${badgeLabel}</span>
+              <button class="btn-export-lansia-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
+              <button class="btn-export-lansia-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
+            </div>
           </div>
           
           <div style="padding: 16px 20px;">
