@@ -1226,63 +1226,6 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             `;
 
-            if (typeof lucide !== "undefined") {
-              lucide.createIcons();
-            }
-
-            listView.style.display = 'none';
-            detailView.style.display = 'block';
-            
-    // Attach Export Listeners for Search Result
-    const searchCardEl = document.getElementById(cardId);
-    if (searchCardEl) {
-      const btnSingleExcel = searchCardEl.querySelector('.btn-export-single-excel');
-      const btnSinglePdf = searchCardEl.querySelector('.btn-export-single-pdf');
-      if (btnSingleExcel && result.warga) {
-        btnSingleExcel.addEventListener('click', () => window.cipabotExportExcel([result.warga], `warga_${result.warga.nama}.xlsx`));
-      }
-      if (btnSinglePdf && result.warga) {
-        btnSinglePdf.addEventListener('click', () => window.cipabotExportPdf(`Biodata Warga - ${result.warga.nama}`, [result.warga]));
-      }
-
-      const btnMultiExcel = searchCardEl.querySelector('.btn-export-multi-excel');
-      const btnMultiPdf = searchCardEl.querySelector('.btn-export-multi-pdf');
-      if (btnMultiExcel && result.matches) {
-        btnMultiExcel.addEventListener('click', () => window.cipabotExportExcel(result.matches, `hasil_pencarian_${result.query}.xlsx`));
-      }
-      if (btnMultiPdf && result.matches) {
-        btnMultiPdf.addEventListener('click', () => window.cipabotExportPdf(`Hasil Pencarian Warga - ${result.query}`, result.matches));
-      }
-    }
-  
-    
-    const searchCardEl = document.getElementById(cardId);
-    if (searchCardEl) {
-      const btnSingleExcel = searchCardEl.querySelector('.btn-export-single-excel');
-      const btnSinglePdf = searchCardEl.querySelector('.btn-export-single-pdf');
-      if (btnSingleExcel && result.warga) {
-        btnSingleExcel.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportExcel([result.warga], `warga_${result.warga.nama}.xlsx`); });
-      }
-      if (btnSinglePdf && result.warga) {
-        btnSinglePdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf(`Biodata Warga - ${result.warga.nama}`, [result.warga]); });
-      }
-
-      const btnMultiExcel = searchCardEl.querySelector('.btn-export-multi-excel');
-      const btnMultiPdf = searchCardEl.querySelector('.btn-export-multi-pdf');
-      if (btnMultiExcel && result.matches) {
-        btnMultiExcel.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportExcel(result.matches, `hasil_pencarian_${result.query}.xlsx`); });
-      }
-      if (btnMultiPdf && result.matches) {
-        btnMultiPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf(`Hasil Pencarian Warga - ${result.query}`, result.matches); });
-      }
-    }
-
-    scrollToBottom();
-          });
-        });
-
-        backBtns.forEach(btn => {
-          btn.addEventListener('click', () => {
             detailView.style.display = 'none';
             listView.style.display = 'block';
             scrollToBottom();
@@ -1685,19 +1628,6 @@ document.addEventListener("DOMContentLoaded", () => {
           listView.style.display = 'none';
           detailView.style.display = 'block';
           
-    const lansiaCardEl = document.getElementById(cardId);
-    if (lansiaCardEl) {
-      const btnLansiaExcel = lansiaCardEl.querySelector('.btn-export-lansia-excel');
-      const btnLansiaPdf = lansiaCardEl.querySelector('.btn-export-lansia-pdf');
-      if (btnLansiaExcel) {
-        btnLansiaExcel.addEventListener('click', () => window.cipabotExportExcel(lansiaList, 'data_warga_lansia.xlsx'));
-      }
-      if (btnLansiaPdf) {
-        btnLansiaPdf.addEventListener('click', () => window.cipabotExportPdf('Daftar Warga Lansia (Usia >= 60 Tahun)', lansiaList));
-      }
-    }
-  
-    
     const lansiaCardEl = document.getElementById(cardId);
     if (lansiaCardEl) {
       const btnLansiaExcel = lansiaCardEl.querySelector('.btn-export-lansia-excel');
