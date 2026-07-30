@@ -1,13 +1,4 @@
 {
-  "version": 2,
-  "name": "cipabot",
-  "outputDirectory": ".",
-  "buildCommand": "",
-  "installCommand": "",
   "cleanUrls": true,
-  "trailingSlash": false,
-  "rewrites": [
-    { "source": "/chatbot", "destination": "/chatbot.html" },
-    { "source": "/index", "destination": "/index.html" }
-  ]
+  "trailingSlash": false
 }
