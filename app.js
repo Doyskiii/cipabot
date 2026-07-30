@@ -1013,13 +1013,17 @@ document.addEventListener("DOMContentLoaded", () => {
           <div class="chat-bubble bot">
             Data warga berhasil ditemukan. Berikut adalah rincian informasi penduduk:
           </div>
-          <div class="result-card">
+          <div class="result-card" id="${cardId}">
             <div class="result-card-header">
               <div class="result-card-title">
                 <i data-lucide="user" style="width: 16px; height: 16px; color: var(--primary);"></i>
                 Data Warga Ditemukan
               </div>
-              <span class="result-badge">Terverifikasi</span>
+              <div style="display: flex; gap: 6px; align-items: center;">
+    <span class="result-badge">Terverifikasi</span>
+    <button class="btn-export-single-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
+    <button class="btn-export-single-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
+  </div>
             </div>
             <div class="result-card-grid">
               <div class="result-item">
@@ -1217,6 +1221,28 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   
+    
+    const searchCardEl = document.getElementById(cardId);
+    if (searchCardEl) {
+      const btnSingleExcel = searchCardEl.querySelector('.btn-export-single-excel');
+      const btnSinglePdf = searchCardEl.querySelector('.btn-export-single-pdf');
+      if (btnSingleExcel && result.warga) {
+        btnSingleExcel.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportExcel([result.warga], `warga_${result.warga.nama}.xlsx`); });
+      }
+      if (btnSinglePdf && result.warga) {
+        btnSinglePdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf(`Biodata Warga - ${result.warga.nama}`, [result.warga]); });
+      }
+
+      const btnMultiExcel = searchCardEl.querySelector('.btn-export-multi-excel');
+      const btnMultiPdf = searchCardEl.querySelector('.btn-export-multi-pdf');
+      if (btnMultiExcel && result.matches) {
+        btnMultiExcel.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportExcel(result.matches, `hasil_pencarian_${result.query}.xlsx`); });
+      }
+      if (btnMultiPdf && result.matches) {
+        btnMultiPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf(`Hasil Pencarian Warga - ${result.query}`, result.matches); });
+      }
+    }
+
     scrollToBottom();
           });
         });
@@ -1434,7 +1460,11 @@ document.addEventListener("DOMContentLoaded", () => {
               ${cardTitle}
             </div>
             <div style="display: flex; gap: 6px; align-items: center;">
+    <div style="display: flex; gap: 6px; align-items: center;">
     <span class="result-badge" style="background-color: ${badgeColor}; color: white;">${badgeLabel}</span>
+    <button class="btn-export-lansia-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
+    <button class="btn-export-lansia-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
+  </div>
     <button class="btn-export-lansia-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
       📥 Excel
     </button>
@@ -1598,6 +1628,19 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
   
+    
+    const lansiaCardEl = document.getElementById(cardId);
+    if (lansiaCardEl) {
+      const btnLansiaExcel = lansiaCardEl.querySelector('.btn-export-lansia-excel');
+      const btnLansiaPdf = lansiaCardEl.querySelector('.btn-export-lansia-pdf');
+      if (btnLansiaExcel) {
+        btnLansiaExcel.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportExcel(lansiaList, 'data_warga_lansia.xlsx'); });
+      }
+      if (btnLansiaPdf) {
+        btnLansiaPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Daftar Warga Lansia (Usia >= 60 Tahun)', lansiaList); });
+      }
+    }
+
     scrollToBottom();
         });
       });
