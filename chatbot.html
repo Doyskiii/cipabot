@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIPABOT - Panel Pencarian Data Warga</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <link rel="stylesheet" href="style.css">
+
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CIPABOT">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- Sidebar Kiri -->
+    <aside class="app-sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="sidebar-logo">
+          <div class="logo-icon" style="background: none; padding: 0; overflow: hidden; width: 36px; height: 36px; border-radius: 10px; flex-shrink: 0;">
+            <img src="logo.jpg" alt="CIPABOT Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+          </div>
+          <div class="sidebar-logo-text">
+            <span class="sidebar-logo-title">CIPABOT</span>
+            <span class="sidebar-logo-subtitle">Search Tool</span>
+          </div>
+        </a>
+      </div>
+
+      <div class="sidebar-action-wrapper">
+        <button id="btn-new-search" class="btn-sidebar-new">
+          <i data-lucide="plus" style="width: 16px; height: 16px;"></i>
+          Pencarian Baru
+        </button>
+      </div>
+
+      <div class="sidebar-action-wrapper" style="padding-top: 0;">
+        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+          <div style="display: flex; gap: 6px; align-items: center; width: 100%;">
+            <label for="excel-file-input" class="btn-sidebar-new" style="flex: 1; background-color: #ECFDF5; border-color: #A7F3D0; color: #047857; display: flex; cursor: pointer; justify-content: center; gap: 8px; font-size: 12px; padding: 10px 8px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+              <i data-lucide="file-plus" style="width: 16px; height: 16px; color: #10B981; flex-shrink: 0;"></i>
+              <span id="excel-upload-label" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">+ Unggah Excel Baru</span>
+            </label>
+            <button id="btn-reset-excel" title="Hapus file aktif dari riwayat" style="background-color: #FEF2F2; border: 1px solid #FCA5A5; color: #EF4444; border-radius: var(--radius-md); padding: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;">
+              <i data-lucide="trash-2" style="width: 15px; height: 15px;"></i>
+            </button>
+          </div>
+
+          <!-- Selector Riwayat File Excel -->
+          <div id="excel-history-wrapper" style="width: 100%;">
+            <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+              <i data-lucide="folder-open" style="width: 13px; height: 13px; color: var(--primary);"></i> Dataset Terunggah:
+            </div>
+            <select id="excel-file-selector" style="width: 100%; font-size: 12px; padding: 8px 10px; border-radius: var(--radius-md); border: 1px solid var(--border); background-color: var(--bg-white); color: var(--text-main); font-weight: 600; cursor: pointer; outline: none; transition: border-color 0.2s;">
+              <option value="default">🌐 Dataset Bawaan (RW 02)</option>
+            </select>
+          </div>
+        </div>
+        <input type="file" id="excel-file-input" accept=".xlsx, .xls" style="display: none;">
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="sidebar-menu-item">
+          <a href="index.html">
+            <i data-lucide="layout-dashboard" style="width: 18px; height: 18px;"></i>
+            Dashboard
+          </a>
+        </li>
+        <li class="sidebar-menu-item active">
+          <a href="chatbot.html">
+            <i data-lucide="message-square" style="width: 18px; height: 18px;"></i>
+            Chatbot
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="index.html#panduan">
+            <i data-lucide="book-open" style="width: 18px; height: 18px;"></i>
+            Panduan
+          </a>
+        </li>
+        <li class="sidebar-menu-item">
+          <a href="index.html#tentang">
+            <i data-lucide="info" style="width: 18px; height: 18px;"></i>
+            Tentang
+          </a>
+        </li>
+      </ul>
+
+      <!-- Search History Section -->
+      <div class="sidebar-history-section">
+        <div class="sidebar-section-title">
+          <span>Riwayat Pencarian</span>
+          <i data-lucide="history" style="width: 12px; height: 12px;"></i>
+        </div>
+        <div class="sidebar-history-list" id="history-list">
+          <!-- Rendered dynamically from JS/LocalStorage -->
+        </div>
+      </div>
+
+      <!-- User Profile at bottom -->
+      <div class="sidebar-footer">
+        <div class="sidebar-profile">
+          <div class="user-avatar" style="width: 36px; height: 36px;">AD</div>
+          <div class="profile-info">
+            <span class="profile-name">Admin Kelurahan</span>
+            <span class="profile-role">Petugas Cipaganti</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="window.location.href='index.html'">
+          <i data-lucide="log-out" style="width: 16px; height: 16px;"></i>
+          Logout
+        </button>
+      </div>
+    </aside>
+
+    <!-- Area Chat Utama -->
+    <main class="chat-main-area">
+      <!-- Chat Header -->
+      <header class="chat-header">
+        <div class="chat-header-info">
+          <h2 class="chat-header-title">Pencarian Data Warga</h2>
+          <span class="chat-header-subtitle">Kelurahan Cipaganti, Coblong, Kota Bandung</span>
+        </div>
+        <div class="chat-header-actions">
+          <button class="notification-btn">
+            <i data-lucide="bell" style="width: 20px; height: 20px;"></i>
+          </button>
+          <div class="user-avatar" style="font-size: 13px; font-weight: 700;">AD</div>
+        </div>
+      </header>
+
+      <!-- Chat Body -->
+      <div class="chat-body" id="chat-body">
+        
+        <!-- Welcome Bot Container Card -->
+        <div class="welcome-container-card" id="welcome-card">
+          <div class="welcome-robot-icon" style="background: none; box-shadow: none; width: 80px; height: 80px; padding: 0; overflow: hidden; border-radius: 20px;">
+            <img src="logo.jpg" alt="CIPABOT Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+          </div>
+          <h2 class="welcome-title">Halo!</h2>
+          <h3 class="welcome-title" style="margin-top: -6px; margin-bottom: 8px;">Saya adalah CIPABOT</h3>
+          <p class="welcome-subtitle">
+            Saya siap membantu pencarian data warga. Silakan ketik Nama atau NIK warga pada kolom input di bawah.
+          </p>
+          <div class="welcome-suggestions">
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Berapa jumlah lansia?'; document.getElementById('chat-send-btn').click();">👴 Semua Lansia (≥60 Thn)</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Berapa jumlah lansia per RT?'; document.getElementById('chat-send-btn').click();">🗺️ Lansia per RT</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Berapa jumlah lansia laki-laki?'; document.getElementById('chat-send-btn').click();">👨‍🦳 Lansia Laki-laki</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Berapa jumlah lansia perempuan?'; document.getElementById('chat-send-btn').click();">👵 Lansia Perempuan</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Berapa jumlah laki-laki'; document.getElementById('chat-send-btn').click();">📊 Gender Total</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Bagaimana statistik profesi atau status pekerjaan warga?'; document.getElementById('chat-send-btn').click();">💼 Status Pekerjaan</button>
+
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Bagaimana statistik tingkat pendidikan warga?'; document.getElementById('chat-send-btn').click();">🎓 Status Pendidikan</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Statistik pendidikan laki-laki'; document.getElementById('chat-send-btn').click();">🎓 Pendidikan Laki-laki</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Statistik pendidikan perempuan'; document.getElementById('chat-send-btn').click();">🎓 Pendidikan Perempuan</button>
+
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Statistik pekerjaan laki-laki'; document.getElementById('chat-send-btn').click();">💼 Pekerjaan Laki-laki</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Statistik pekerjaan perempuan'; document.getElementById('chat-send-btn').click();">💼 Pekerjaan Perempuan</button>
+            <button class="tag-btn" onclick="document.getElementById('chat-input-field').value='Bagaimana statistik agama warga?'; document.getElementById('chat-send-btn').click();">🕌 Status Agama</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Chat Input Area -->
+      <footer class="chat-input-bar">
+        <div class="input-container">
+          <i data-lucide="search" class="search-icon-input" style="width: 20px; height: 20px;"></i>
+          <input type="text" id="chat-input-field" class="main-input-field" placeholder="Tanyakan Nama atau NIK warga...">
+          
+          <!-- Dropdown untuk memilih algoritma -->
+          <div class="algo-select-wrapper">
+            <select id="algo-select" class="algo-select">
+              <option value="kmp">Knuth-Morris-Pratt</option>
+              <option value="bm">Boyer-Moore (Horspool)</option>
+              <option value="fullbm">Boyer-Moore (Full)</option>
+            </select>
+            <i data-lucide="chevron-down" class="algo-select-chevron" style="width: 14px; height: 14px;"></i>
+          </div>
+
+          <button id="chat-send-btn" class="btn-chat-send">
+            <i data-lucide="send" style="width: 18px; height: 18px;"></i>
+          </button>
+        </div>
+        <span class="input-bottom-disclaimer">Akses Terbatas Untuk Petugas Kelurahan Cipaganti</span>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- SheetJS Library for Excel Parsing -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="app.js"></script>
+
+  <!-- Register PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('[PWA] Service Worker terdaftar:', reg.scope))
+          .catch(err => console.warn('[PWA] Gagal mendaftar Service Worker:', err));
+      });
+    }
+  </script>
+
+</body>
+</html>

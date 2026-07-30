@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "name": "cipabot",
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "routes": [
+    {
+      "src": "/chatbot",
+      "dest": "/chatbot.html"
+    },
+    {
+      "src": "/index",
+      "dest": "/index.html"
+    }
+  ]
+}

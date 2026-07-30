@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIPABOT - Chatbot Pencarian Data Warga Kelurahan Cipaganti</title>
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+  <!-- Google Fonts Inter -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#059669">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="CIPABOT">
+  <link rel="apple-touch-icon" href="logo.jpg">
+  <link rel="icon" type="image/jpeg" href="logo.jpg">
+
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="logo-container">
+        <div class="logo-icon" style="background: none; padding: 0; overflow: hidden; width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;">
+          <img src="logo.jpg" alt="CIPABOT Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+        </div>
+        <div class="logo-text-wrapper">
+          <span class="logo-title">CIPABOT</span>
+          <span class="logo-subtitle">Chatbot Pencarian Data Warga Kelurahan Cipaganti</span>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html" class="nav-link active">Dashboard</a></li>
+        <li><a href="#panduan" class="nav-link">Panduan</a></li>
+        <li><a href="#tentang" class="nav-link">Tentang</a></li>
+      </ul>
+      <div class="nav-actions">
+        <a href="chatbot.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;">Mulai Chat</a>
+        <div class="user-avatar">GR</div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-content">
+        <div class="badge">
+          <span class="badge-dot"></span>
+          Sistem Informasi Kelurahan Digital
+        </div>
+        <h1 class="hero-title">Selamat Datang di <span>CIPABOT</span></h1>
+        <p class="hero-desc">
+          CIPABOT merupakan chatbot pencarian data warga yang membantu petugas Kelurahan Cipaganti menemukan informasi penduduk secara cepat menggunakan algoritma <strong>Knuth-Morris-Pratt (KMP)</strong> dan <strong>Boyer-Moore</strong>.
+        </p>
+        <div class="hero-actions">
+          <a href="chatbot.html" class="btn btn-primary">
+            Mulai Chat
+            <i data-lucide="message-square" style="width: 18px; height: 18px;"></i>
+          </a>
+          <a href="#panduan" class="btn btn-secondary">
+            Panduan Penggunaan
+            <i data-lucide="file-text" style="width: 18px; height: 18px;"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Hero Interactive Mini Chatbot Simulator -->
+      <div class="hero-illustration-wrapper">
+        <div class="hero-chatbot-card">
+          <div class="chat-card-header">
+            <div class="chat-card-title">
+              <i data-lucide="bot" style="width: 20px; height: 20px; color: var(--primary);"></i>
+              <span class="chat-card-title-text">Simulator CIPABOT</span>
+            </div>
+            <div class="chat-status-indicator">
+              <span class="chat-status-dot"></span>
+              Sistem Online
+            </div>
+          </div>
+          <div class="chat-card-body" id="hero-chat-body">
+            <div class="message-bubble message-bot">
+              Halo! Saya CIPABOT. Coba ketik nama warga Kelurahan Cipaganti atau klik contoh di bawah ini:
+            </div>
+            <div class="suggested-tags">
+              <button class="tag-btn">Contoh: Andri</button>
+              <button class="tag-btn">Contoh: Siti</button>
+              <button class="tag-btn">Contoh: NIK 3273...</button>
+            </div>
+          </div>
+          <div class="chat-card-footer">
+            <div class="chat-input-wrapper">
+              <input type="text" id="hero-chat-input" class="chat-input" placeholder="Ketik Nama/NIK warga...">
+              <button id="hero-send-btn" class="chat-send-btn">
+                <i data-lucide="send" style="width: 14px; height: 14px;"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Statistics Section -->
+  <section class="statistics">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i data-lucide="database" style="width: 20px; height: 20px;"></i>
+          </div>
+          <span class="stat-title">DATA WARGA</span>
+          <span class="stat-value">35.000+</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i data-lucide="file-spreadsheet" style="width: 20px; height: 20px;"></i>
+          </div>
+          <span class="stat-title">DATASET</span>
+          <span class="stat-value">Microsoft Excel</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i data-lucide="search" style="width: 20px; height: 20px;"></i>
+          </div>
+          <span class="stat-title">ALGORITMA</span>
+          <span class="stat-value" style="font-size: 18px;">KMP & Boyer-Moore</span>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+          </div>
+          <span class="stat-title">STATUS</span>
+          <span class="stat-value">Sistem Aktif <span class="stat-dot"></span></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="tentang">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">Keunggulan CIPABOT</h2>
+        <div class="section-underline"></div>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">Cepat</h3>
+          <p class="feature-desc">Pencarian data dilakukan dalam hitungan milidetik.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i data-lucide="radar" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">Akurat</h3>
+          <p class="feature-desc">Pencocokan string presisi dengan algoritma tingkat tinggi.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i data-lucide="message-square-text" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">Mudah Digunakan</h3>
+          <p class="feature-desc">Antarmuka chatbot yang intuitif bagi siapa saja.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper">
+            <i data-lucide="server-off" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">Tanpa Database</h3>
+          <p class="feature-desc">Sistem efisien yang bekerja langsung dari file Excel.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works" id="panduan">
+    <div class="container">
+      <div>
+        <h2 class="section-title" style="text-align: left;">Cara Kerja CIPABOT</h2>
+        <p class="section-desc" style="text-align: left; margin-bottom: 20px;">
+          Alur kerja sistematis yang memastikan petugas mendapatkan informasi warga secara instan.
+        </p>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-step">1</div>
+            <div class="timeline-content">
+              <h4 class="timeline-title">Masukkan Nama/NIK</h4>
+              <p class="timeline-desc">Ketik identitas warga yang ingin dicari pada kolom chat.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-step">2</div>
+            <div class="timeline-content">
+              <h4 class="timeline-title">Sistem membaca Excel</h4>
+              <p class="timeline-desc">Bot mengakses dataset kependudukan langsung dari file sumber.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-step">3</div>
+            <div class="timeline-content">
+              <h4 class="timeline-title">Algoritma KMP & BM melakukan pencocokan</h4>
+              <p class="timeline-desc">Proses string matching tingkat tinggi untuk memastikan akurasi data.</p>
+            </div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-step">4</div>
+            <div class="timeline-content">
+              <h4 class="timeline-title">Data warga ditampilkan</h4>
+              <p class="timeline-desc">Informasi lengkap penduduk muncul dalam hitungan milidetik.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- String Matching Interactive Visualizer -->
+      <div class="visualizer-container">
+        <div class="visualizer-header">
+          <h3 class="visualizer-title">
+            <i data-lucide="binary" style="width: 20px; height: 20px; color: var(--primary);"></i>
+            Visualisasi String Matching
+          </h3>
+          <p class="visualizer-desc">Lihat bagaimana pola dicocokkan di dalam teks secara terstruktur.</p>
+        </div>
+        <div class="algo-toggle-pills">
+          <button class="algo-pill active" id="pill-kmp">Knuth-Morris-Pratt (KMP)</button>
+          <button class="algo-pill" id="pill-bm">Boyer-Moore (BM)</button>
+        </div>
+        <div class="string-box-group">
+          <div class="string-row">
+            <div class="string-label">Teks</div>
+            <div class="string-chars" id="text-chars">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+          <div class="string-row">
+            <div class="string-label">Pola</div>
+            <div class="string-chars" id="pattern-chars">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+        <div class="visualizer-stats">
+          <span>Perbandingan: <span id="visualizer-comp">0</span> karakter</span>
+          <span>Pergeseran: <span id="visualizer-shift">0</span> kali</span>
+        </div>
+        <div style="display: flex; gap: 12px; margin-top: 20px;">
+          <button class="btn btn-primary" id="btn-visualizer-next" style="padding: 8px 16px; font-size: 13px; flex: 1;">
+            Langkah Berikutnya
+          </button>
+          <button class="btn btn-secondary" id="btn-visualizer-reset" style="padding: 8px 16px; font-size: 13px;">
+            Reset
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo-container">
+            <div class="logo-icon">
+              <i data-lucide="shield" style="width: 20px; height: 20px;"></i>
+            </div>
+            <span class="logo-title" style="font-size: 16px;">CIPABOT</span>
+          </div>
+          <p class="footer-desc">
+            Layanan digital kependudukan modern berbasis chatbot untuk efisiensi birokrasi di Kelurahan Cipaganti.
+          </p>
+        </div>
+        <div class="footer-links-col">
+          <h4 class="footer-title">Tujuan Penelitian</h4>
+          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
+            Research Prototype - Tugas Akhir Program Studi Sistem Informasi, Universitas Kebangsaan Republik Indonesia.
+          </p>
+        </div>
+        <div class="footer-links-col">
+          <h4 class="footer-title">Kontak & Lokasi</h4>
+          <ul class="footer-links">
+            <li>Bandung, Jawa Barat, Indonesia</li>
+            <li>Kantor Kelurahan Cipaganti</li>
+            <li>support@cipabot.id</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 CIPABOT. All rights reserved.</span>
+        <span>Bandung, Jawa Barat</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="app.js"></script>
+
+  <!-- Register PWA Service Worker -->
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('[PWA] Service Worker terdaftar:', reg.scope))
+          .catch(err => console.warn('[PWA] Gagal mendaftar Service Worker:', err));
+      });
+    }
+  </script>
+
+</body>
+</html>

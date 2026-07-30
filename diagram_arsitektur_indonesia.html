@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Diagram Arsitektur Sistem CIPABOT</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f1f5f9;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      justify-content: center;
+    }
+    .diagram-container {
+      background-color: #ffffff;
+      border: 2px solid #cbd5e1;
+      border-radius: 16px;
+      padding: 30px;
+      width: 850px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    }
+    .main-title {
+      text-align: center;
+      font-size: 22px;
+      font-weight: 800;
+      color: #1e3a8a;
+      margin-bottom: 25px;
+      border-bottom: 2px dashed #94a3b8;
+      padding-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+    .layer-card {
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin-bottom: 20px;
+      background-color: #ffffff;
+      position: relative;
+    }
+    .layer-title {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .layer-1 { border-color: #2563eb; background-color: #eff6ff; }
+    .layer-1 .layer-title { color: #1d4ed8; }
+    
+    .layer-2 { border-color: #0284c7; background-color: #f0f9ff; }
+    .layer-2 .layer-title { color: #0369a1; }
+    
+    .layer-3 { border-color: #059669; background-color: #ecfdf5; }
+    .layer-3 .layer-title { color: #047857; }
+
+    .grid-container {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .item-box {
+      background-color: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f172a;
+      flex: 1;
+      min-width: 160px;
+      text-align: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .arrow-divider {
+      text-align: center;
+      font-size: 26px;
+      color: #2563eb;
+      margin: -12px 0 8px 0;
+      font-weight: 900;
+    }
+    .footer-tag {
+      text-align: center;
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 15px;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="diagram-container">
+    <div class="main-title">DIAGRAM ARSITEKTUR SISTEM CIPABOT (CLIENT-SIDE WEB APPLICATION)</div>
+    
+    <!-- LAPISAN 1 -->
+    <div class="layer-card layer-1">
+      <div class="layer-title">
+        🖥️ 1. Lapisan Antarmuka Pengguna (User Interface Layer)
+      </div>
+      <div class="grid-container">
+        <div class="item-box">index.html<br><span style="font-weight:400; font-size:11px; color:#475569;">(Dashboard & Simulator)</span></div>
+        <div class="item-box">chatbot.html<br><span style="font-weight:400; font-size:11px; color:#475569;">(Panel Chatbot Utama)</span></div>
+        <div class="item-box">style.css<br><span style="font-weight:400; font-size:11px; color:#475569;">(Desain & Tema UI)</span></div>
+      </div>
+    </div>
+
+    <div class="arrow-divider">▼</div>
+
+    <!-- LAPISAN 2 -->
+    <div class="layer-card layer-2">
+      <div class="layer-title">
+        ⚙️ 2. Lapisan Logika & Pemrosesan (Core Business Logic Layer - app.js)
+      </div>
+      <div class="grid-container">
+        <div class="item-box">Pemroses NLP<br><span style="font-weight:400; font-size:11px; color:#475569;">(Pengeluar Kata Awalan)</span></div>
+        <div class="item-box">Algoritma KMP & BM<br><span style="font-weight:400; font-size:11px; color:#475569;">(Pencocokan String)</span></div>
+        <div class="item-box">Koreksi Typo<br><span style="font-weight:400; font-size:11px; color:#475569;">(Levenshtein Distance)</span></div>
+        <div class="item-box">Analisis Lansia & Gender<br><span style="font-weight:400; font-size:11px; color:#475569;">(Rekapitulasi per RT)</span></div>
+      </div>
+    </div>
+
+    <div class="arrow-divider">▼</div>
+
+    <!-- LAPISAN 3 -->
+    <div class="layer-card layer-3">
+      <div class="layer-title">
+        💾 3. Lapisan Data & Penyimpanan (Data & Storage Layer)
+      </div>
+      <div class="grid-container">
+        <div class="item-box">Pengurai Excel SheetJS<br><span style="font-weight:400; font-size:11px; color:#475569;">(Multi-Sheet RT 01-10)</span></div>
+        <div class="item-box">Memori Browser<br><span style="font-weight:400; font-size:11px; color:#475569;">(Array DATASET_WARGA)</span></div>
+        <div class="item-box">Penyimpanan Lokal<br><span style="font-weight:400; font-size:11px; color:#475569;">(LocalStorage Riwayat)</span></div>
+      </div>
+    </div>
+
+    <div class="footer-tag">
+      *Seluruh arsitektur berjalan 100% di sisi klien (Client-Side Browser) tanpa server backend luar.
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "name": "cipabot",
+  "version": "1.0.0",
+  "description": "Aplikasi Chatbot Data Warga Kelurahan Cipaganti dengan Algoritma KMP dan Boyer-Moore",
+  "main": "app.js",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve .",
+    "build": "echo 'Build complete'"
+  },
+  "keywords": [
+    "chatbot",
+    "cipaganti",
+    "kmp",
+    "boyer-moore",
+    "pwa",
+    "kelurahan"
+  ],
+  "author": "Gilang Ramadhan",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.1"
+  }
+}
