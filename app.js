@@ -2061,7 +2061,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <i data-lucide="briefcase" style="width: 16px; height: 16px; color: #059669;"></i>
               Statistik Kategori Pekerjaan
             </div>
-            <span class="result-badge" style="background-color: #059669; color: white;">${sortedPekKeys.length} Kategori</span>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span class="result-badge" style="background-color: #059669; color: white;">${sortedPekKeys.length} Kategori</span>
+              <button class="btn-export-pek-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
+              <button class="btn-export-pek-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
+            </div>
           </div>
 
           <div style="padding: 16px 20px;">
@@ -2274,6 +2278,12 @@ document.addEventListener("DOMContentLoaded", () => {
           scrollToBottom();
         });
       });
+
+      // Export - Pekerjaan
+      const btnPekExcel = cardEl.querySelector('.btn-export-pek-excel');
+      const btnPekPdf = cardEl.querySelector('.btn-export-pek-pdf');
+      if (btnPekExcel) btnPekExcel.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('Library XLSX belum dimuat.'); return; } window.cipabotExportExcel(filteredWarga, 'data_pekerjaan_warga.xlsx'); });
+      if (btnPekPdf) btnPekPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Statistik Pekerjaan Warga Kelurahan Cipaganti', filteredWarga); });
     }
 
     scrollToBottom();
@@ -2411,7 +2421,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <i data-lucide="graduation-cap" style="width: 16px; height: 16px; color: #8B5CF6;"></i>
               Statistik Pendidikan Terakhir
             </div>
-            <span class="result-badge" style="background-color: #8B5CF6; color: white;">${sortedPndKeys.length} Kategori</span>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span class="result-badge" style="background-color: #8B5CF6; color: white;">${sortedPndKeys.length} Kategori</span>
+              <button class="btn-export-pnd-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
+              <button class="btn-export-pnd-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
+            </div>
           </div>
 
           <div style="padding: 16px 20px;">
@@ -2622,6 +2636,12 @@ document.addEventListener("DOMContentLoaded", () => {
           scrollToBottom();
         });
       });
+
+      // Export - Pendidikan
+      const btnPndExcel = cardEl.querySelector('.btn-export-pnd-excel');
+      const btnPndPdf = cardEl.querySelector('.btn-export-pnd-pdf');
+      if (btnPndExcel) btnPndExcel.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('Library XLSX belum dimuat.'); return; } window.cipabotExportExcel(filteredWarga, 'data_pendidikan_warga.xlsx'); });
+      if (btnPndPdf) btnPndPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Statistik Pendidikan Warga Kelurahan Cipaganti', filteredWarga); });
     }
 
     scrollToBottom();
@@ -2699,7 +2719,11 @@ document.addEventListener("DOMContentLoaded", () => {
               <i data-lucide="book" style="width: 16px; height: 16px; color: #6366F1;"></i>
               Statistik Agama Warga
             </div>
-            <span class="result-badge" style="background-color: #6366F1; color: white;">${sortedAgmKeys.length} Agama</span>
+            <div style="display: flex; gap: 6px; align-items: center;">
+              <span class="result-badge" style="background-color: #6366F1; color: white;">${sortedAgmKeys.length} Agama</span>
+              <button class="btn-export-agm-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📥 Excel</button>
+              <button class="btn-export-agm-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 4px 8px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">📄 PDF</button>
+            </div>
           </div>
 
           <div style="padding: 16px 20px;">
@@ -2912,6 +2936,12 @@ document.addEventListener("DOMContentLoaded", () => {
           scrollToBottom();
         });
       });
+
+      // Export - Agama
+      const btnAgmExcel = cardEl.querySelector('.btn-export-agm-excel');
+      const btnAgmPdf = cardEl.querySelector('.btn-export-agm-pdf');
+      if (btnAgmExcel) btnAgmExcel.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('Library XLSX belum dimuat.'); return; } window.cipabotExportExcel(allWarga, 'data_agama_warga.xlsx'); });
+      if (btnAgmPdf) btnAgmPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Statistik Agama Warga Kelurahan Cipaganti', allWarga); });
     }
 
     scrollToBottom();
