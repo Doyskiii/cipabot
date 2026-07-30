@@ -1,155 +1,177 @@
 
+function cipabotCalculateAge(tglLahirStr) {
+  if (!tglLahirStr) return -1;
+  const str = String(tglLahirStr).trim();
+  const parts = str.split(/[-/]/);
+  let d = 0, m = 0, y = 0;
+  if (parts.length === 3) {
+    if (parts[0].length === 4) {
+      y = parseInt(parts[0]);
+      m = parseInt(parts[1]) - 1;
+      d = parseInt(parts[2]);
+    } else if (parts[2].length === 4) {
+      d = parseInt(parts[0]);
+      m = parseInt(parts[1]) - 1;
+      y = parseInt(parts[2]);
+    }
+  }
+  if (!y || isNaN(y)) return -1;
+  const today = new Date();
+  let age = today.getFullYear() - y;
+  const monthDiff = today.getMonth() - m;
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < d)) {
+    age--;
+  }
+  return age;
+}
+
 // ==========================================
 // CIPABOT DATA EXPORT UTILITIES (EXCEL & PDF)
 // ==========================================
 window.cipabotExportExcel = function(dataList, filename = "cipabot_export_warga.xlsx") {
-  if (!dataList || dataList.length === 0) {
-    alert("Tidak ada data untuk diekspor!");
-    return;
+  try {
+    if (!dataList || dataList.length === 0) {
+      alert("Tidak ada data untuk diekspor!");
+      return;
+    }
+    
+    const exportData = dataList.map((w, idx) => {
+      const ageNum = w.umur || cipabotCalculateAge(w.tanggal_lahir);
+      return {
+        "No": idx + 1,
+        "Nama Lengkap": w.nama || "-",
+        "NIK": w.nik || "-",
+        "No. KK": w.kk || "-",
+        "Jenis Kelamin": w.jenis_kelamin || "-",
+        "Tempat Lahir": w.tempat_lahir || "-",
+        "Tanggal Lahir": w.tanggal_lahir || "-",
+        "Umur": ageNum > 0 ? ageNum + " Tahun" : "-",
+        "Agama": w.agama || "-",
+        "Pendidikan Terakhir": w.pendidikan || "-",
+        "Pekerjaan / Profesi": w.pekerjaan || "-",
+        "Status Pernikahan": w.status_pernikahan || "-",
+        "Hubungan Keluarga (SDHK)": w.sdhk || "-",
+        "RT": w.rt || "01",
+        "RW": w.rw || "02",
+        "Alamat Lengkap": w.alamat || "-"
+      };
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    worksheet['!cols'] = [
+      { wch: 5 }, { wch: 25 }, { wch: 20 }, { wch: 20 }, { wch: 14 },
+      { wch: 15 }, { wch: 14 }, { wch: 10 }, { wch: 12 }, { wch: 22 },
+      { wch: 25 }, { wch: 18 }, { wch: 20 }, { wch: 6 }, { wch: 6 }, { wch: 35 }
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Data Warga");
+    XLSX.writeFile(workbook, filename);
+  } catch(err) {
+    console.error("Export Excel Error:", err);
+    alert("Gagal mengunduh file Excel: " + err.message);
   }
-  
-  // Clean structure for Excel sheet
-  const exportData = dataList.map((w, idx) => ({
-    "No": idx + 1,
-    "Nama Lengkap": w.nama || "-",
-    "NIK": w.nik || "-",
-    "No. KK": w.kk || "-",
-    "Jenis Kelamin": w.jenis_kelamin || "-",
-    "Tempat Lahir": w.tempat_lahir || "-",
-    "Tanggal Lahir": w.tanggal_lahir || "-",
-    "Umur": w.umur ? w.umur + " Tahun" : (typeof calculateAge === "function" && w.tanggal_lahir ? calculateAge(w.tanggal_lahir) + " Tahun" : "-"),
-    "Agama": w.agama || "-",
-    "Pendidikan Terakhir": w.pendidikan || "-",
-    "Pekerjaan / Profesi": w.pekerjaan || "-",
-    "Status Pernikahan": w.status_pernikahan || "-",
-    "Hubungan Keluarga (SDHK)": w.sdhk || "-",
-    "RT": w.rt || "01",
-    "RW": w.rw || "02",
-    "Alamat Lengkap": w.alamat || "-"
-  }));
-
-  const worksheet = XLSX.utils.json_to_sheet(exportData);
-  
-  // Set column widths
-  worksheet['!cols'] = [
-    { wch: 5 },  // No
-    { wch: 25 }, // Nama
-    { wch: 20 }, // NIK
-    { wch: 20 }, // KK
-    { wch: 14 }, // JK
-    { wch: 15 }, // Tempat Lahir
-    { wch: 14 }, // Tgl Lahir
-    { wch: 10 }, // Umur
-    { wch: 12 }, // Agama
-    { wch: 22 }, // Pendidikan
-    { wch: 25 }, // Pekerjaan
-    { wch: 18 }, // Status Nikah
-    { wch: 20 }, // SDHK
-    { wch: 6 },  // RT
-    { wch: 6 },  // RW
-    { wch: 35 }  // Alamat
-  ];
-
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Data Warga");
-  XLSX.writeFile(workbook, filename);
 };
 
 window.cipabotExportPdf = function(reportTitle, dataList) {
-  if (!dataList || dataList.length === 0) {
-    alert("Tidak ada data untuk dicetak!");
-    return;
-  }
+  try {
+    if (!dataList || dataList.length === 0) {
+      alert("Tidak ada data untuk dicetak!");
+      return;
+    }
 
-  const printWindow = window.open('', '_blank');
-  const now = new Date();
-  const dateFormatted = `${now.getDate()} ${['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][now.getMonth()]} ${now.getFullYear()}`;
+    const printWindow = window.open('', '_blank');
+    const now = new Date();
+    const dateFormatted = `${now.getDate()} ${['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][now.getMonth()]} ${now.getFullYear()}`;
 
-  const rowsHtml = dataList.map((w, idx) => {
-    const ageVal = w.umur ? w.umur + ' Thn' : (typeof calculateAge === 'function' && w.tanggal_lahir ? calculateAge(w.tanggal_lahir) + ' Thn' : '-');
-    return `
-      <tr>
-        <td style="text-align: center;">${idx + 1}</td>
-        <td><strong>${w.nama || '-'}</strong></td>
-        <td>${w.nik || '-'}</td>
-        <td>${w.jenis_kelamin || '-'}</td>
-        <td style="text-align: center;">${ageVal}</td>
-        <td style="text-align: center;">RT ${w.rt || '01'}/RW ${w.rw || '02'}</td>
-        <td>${w.pekerjaan || '-'}</td>
-        <td>${w.pendidikan || '-'}</td>
-        <td>${w.alamat || '-'}</td>
-      </tr>
-    `;
-  }).join("");
+    const rowsHtml = dataList.map((w, idx) => {
+      const ageNum = w.umur || cipabotCalculateAge(w.tanggal_lahir);
+      const ageVal = ageNum > 0 ? ageNum + ' Thn' : '-';
+      return `
+        <tr>
+          <td style="text-align: center;">${idx + 1}</td>
+          <td><strong>${w.nama || '-'}</strong></td>
+          <td>${w.nik || '-'}</td>
+          <td>${w.jenis_kelamin || '-'}</td>
+          <td style="text-align: center;">${ageVal}</td>
+          <td style="text-align: center;">RT ${w.rt || '01'}/RW ${w.rw || '02'}</td>
+          <td>${w.pekerjaan || '-'}</td>
+          <td>${w.pendidikan || '-'}</td>
+          <td>${w.alamat || '-'}</td>
+        </tr>
+      `;
+    }).join("");
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html lang="id">
-    <head>
-      <meta charset="UTF-8">
-      <title>${reportTitle}</title>
-      <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; padding: 25px; color: #1e293b; }
-        .header { text-align: center; border-bottom: 3px double #059669; padding-bottom: 12px; margin-bottom: 16px; }
-        .header h2 { margin: 0; font-size: 18px; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; }
-        .header h3 { margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500; }
-        .report-tag { margin: 8px 0 0 0; font-size: 14px; font-weight: 700; color: #059669; text-transform: uppercase; }
-        .meta { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 11px; color: #64748b; }
-        table { width: 100%; border-collapse: collapse; font-size: 11px; }
-        th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
-        th { background-color: #f1f5f9; color: #0f172a; font-weight: 700; text-transform: uppercase; font-size: 10px; }
-        tr:nth-child(even) { background-color: #f8fafc; }
-        .footer { margin-top: 30px; display: flex; justify-content: space-between; font-size: 11px; color: #475569; }
-        @media print {
-          body { padding: 0; }
-        }
-      </style>
-    </head>
-    <body>
-      <div class="header">
-        <h2>PEMERINTAH KOTA BANDUNG - KECAMATAN COBLONG</h2>
-        <h3>KELURAHAN CIPAGANTI - SISTEM CIPABOT</h3>
-        <div class="report-tag">LAPORAN DATA: ${reportTitle.toUpperCase()}</div>
-      </div>
-      <div class="meta">
-        <span>Tanggal Cetak: ${dateFormatted}</span>
-        <span>Total Rekod: ${dataList.length} Warga</span>
-      </div>
-      <table>
-        <thead>
-          <tr>
-            <th style="width: 30px;">No</th>
-            <th>Nama Warga</th>
-            <th>NIK</th>
-            <th>L/P</th>
-            <th style="width: 50px;">Usia</th>
-            <th style="width: 70px;">Wilayah</th>
-            <th>Pekerjaan</th>
-            <th>Pendidikan</th>
-            <th>Alamat</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${rowsHtml}
-        </tbody>
-      </table>
-      <div class="footer">
-        <div>CIPABOT - Kelurahan Cipaganti, Kota Bandung</div>
-        <div style="text-align: right;">
-          <p style="margin:0;">Petugas Kelurahan Cipaganti</p>
-          <br><br>
-          <p style="margin:0; font-weight: 700;">( ____________________________ )</p>
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="id">
+      <head>
+        <meta charset="UTF-8">
+        <title>${reportTitle}</title>
+        <style>
+          body { font-family: 'Segoe UI', Arial, sans-serif; padding: 25px; color: #1e293b; }
+          .header { text-align: center; border-bottom: 3px double #059669; padding-bottom: 12px; margin-bottom: 16px; }
+          .header h2 { margin: 0; font-size: 18px; color: #047857; text-transform: uppercase; letter-spacing: 0.5px; }
+          .header h3 { margin: 4px 0 0 0; font-size: 13px; color: #475569; font-weight: 500; }
+          .report-tag { margin: 8px 0 0 0; font-size: 14px; font-weight: 700; color: #059669; text-transform: uppercase; }
+          .meta { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 11px; color: #64748b; }
+          table { width: 100%; border-collapse: collapse; font-size: 11px; }
+          th, td { border: 1px solid #cbd5e1; padding: 6px 8px; text-align: left; }
+          th { background-color: #f1f5f9; color: #0f172a; font-weight: 700; text-transform: uppercase; font-size: 10px; }
+          tr:nth-child(even) { background-color: #f8fafc; }
+          .footer { margin-top: 30px; display: flex; justify-content: space-between; font-size: 11px; color: #475569; }
+          @media print { body { padding: 0; } }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h2>PEMERINTAH KOTA BANDUNG - KECAMATAN COBLONG</h2>
+          <h3>KELURAHAN CIPAGANTI - SISTEM CIPABOT</h3>
+          <div class="report-tag">LAPORAN DATA: ${reportTitle.toUpperCase()}</div>
         </div>
-      </div>
-      <script>
-        window.onload = function() { window.print(); }
-      </script>
-    </body>
-    </html>
-  `;
+        <div class="meta">
+          <span>Tanggal Cetak: ${dateFormatted}</span>
+          <span>Total Rekod: ${dataList.length} Warga</span>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 30px;">No</th>
+              <th>Nama Warga</th>
+              <th>NIK</th>
+              <th>L/P</th>
+              <th style="width: 50px;">Usia</th>
+              <th style="width: 70px;">Wilayah</th>
+              <th>Pekerjaan</th>
+              <th>Pendidikan</th>
+              <th>Alamat</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rowsHtml}
+          </tbody>
+        </table>
+        <div class="footer">
+          <div>CIPABOT - Kelurahan Cipaganti, Kota Bandung</div>
+          <div style="text-align: right;">
+            <p style="margin:0;">Petugas Kelurahan Cipaganti</p>
+            <br><br>
+            <p style="margin:0; font-weight: 700;">( ____________________________ )</p>
+          </div>
+        </div>
+        <script>
+          window.onload = function() { window.print(); }
+        </script>
+      </body>
+      </html>
+    `;
 
-  printWindow.document.write(htmlContent);
-  printWindow.document.close();
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  } catch(err) {
+    console.error("Export PDF Error:", err);
+    alert("Gagal membuka PDF cetak: " + err.message);
+  }
 };
 
 // Dataset Warga Kelurahan Cipaganti (RW 02)
@@ -871,7 +893,19 @@ document.addEventListener("DOMContentLoaded", () => {
       Cetak / PDF
     </button>
   </div>
-  <!-- Algoritma Comparison Bar -->
+  
+    <div style="margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px;">
+      <button class="btn-export-ind-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+        <i data-lucide="download" style="width: 14px; height: 14px; color: #10B981;"></i>
+        Unduh Excel Warga Ini (.xlsx)
+      </button>
+      <button class="btn-export-ind-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s;">
+        <i data-lucide="printer" style="width: 14px; height: 14px; color: #3B82F6;"></i>
+        Cetak / PDF Warga Ini
+      </button>
+    </div>
+  
+<!-- Algoritma Comparison Bar -->
           <div style="background-color: var(--bg-light); border-top: 1px solid var(--border); padding: 16px 20px;">
             <div style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
               <i data-lucide="bar-chart-2" style="width: 14px; height: 14px; color: var(--primary);"></i>
@@ -1271,6 +1305,41 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         }
       });
+    }
+
+    
+    // Attach Export Listeners for Search Result (Single & Multi)
+    const searchCardEl = document.getElementById(cardId);
+    if (searchCardEl) {
+      const btnSingleExcel = searchCardEl.querySelector('.btn-export-single-excel');
+      const btnSinglePdf = searchCardEl.querySelector('.btn-export-single-pdf');
+      if (btnSingleExcel && result.warga) {
+        btnSingleExcel.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.cipabotExportExcel([result.warga], `warga_${result.warga.nama}.xlsx`);
+        });
+      }
+      if (btnSinglePdf && result.warga) {
+        btnSinglePdf.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.cipabotExportPdf(`Biodata Warga - ${result.warga.nama}`, [result.warga]);
+        });
+      }
+
+      const btnMultiExcel = searchCardEl.querySelector('.btn-export-multi-excel');
+      const btnMultiPdf = searchCardEl.querySelector('.btn-export-multi-pdf');
+      if (btnMultiExcel && result.matches) {
+        btnMultiExcel.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.cipabotExportExcel(result.matches, `hasil_pencarian_${result.query}.xlsx`);
+        });
+      }
+      if (btnMultiPdf && result.matches) {
+        btnMultiPdf.addEventListener('click', (e) => {
+          e.stopPropagation();
+          window.cipabotExportPdf(`Hasil Pencarian Warga - ${result.query}`, result.matches);
+        });
+      }
     }
 
     scrollToBottom();
