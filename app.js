@@ -2993,6 +2993,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 
+  // === HELPER: Extract RT numbers from query ===
+  // Returns array like ["01","07","10"] or empty [] if none specified
+  function extractRtNumbers(q) {
+    const rtNums = [];
+    const re = /\br\.?t\.?\s*[-:]?\s*(\d{1,2})\b/gi;
+    let m;
+    while ((m = re.exec(q)) !== null) {
+      rtNums.push(String(parseInt(m[1])).padStart(2, '0'));
+    }
+    return [...new Set(rtNums)];
+  }
+
+  // === HELPER: Filter dataset by RT numbers ===
+  function filterByRts(dataset, rtNums) {
+    if (!rtNums || rtNums.length === 0) return dataset;
+    return dataset.filter(w => {
+      if (!w.rt) return false;
+      const wRt = String(w.rt).replace(/\D/g, '').padStart(2, '0');
+      return rtNums.includes(wRt);
+    });
+  }
+
   function handleSearch(query, algo) {
     const trimmedQuery = query.trim();
     if (trimmedQuery === "") return;
@@ -3021,29 +3043,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       
-      // === HELPER: Extract RT numbers from query ===
-      // Returns array like ["01","07","10"] or empty [] if none specified
-      function extractRtNumbers(q) {
-        const rtNums = [];
-        // Match patterns: rt10, rt 10, rt.10, rt-10, rt:10 (single or double digit)
-        const re = /\br\.?t\.?\s*[-:]?\s*(\d{1,2})\b/gi;
-        let m;
-        while ((m = re.exec(q)) !== null) {
-          rtNums.push(String(parseInt(m[1])).padStart(2, '0'));
-        }
-        return [...new Set(rtNums)]; // deduplicate
-      }
-
-      // === HELPER: Filter dataset by RT numbers ===
-      function filterByRts(dataset, rtNums) {
-        if (!rtNums || rtNums.length === 0) return dataset;
-        return dataset.filter(w => {
-          if (!w.rt) return false;
-          const wRt = String(w.rt).replace(/\D/g, '').padStart(2, '0');
-          return rtNums.includes(wRt);
-        });
-      }
-
       // 2. Check for Lansia queries
       const isLansia = lowerQuery.includes("lansia") || lowerQuery.includes("lanjut usia") || lowerQuery.includes("manula") || lowerQuery.includes("60 tahun") || lowerQuery.includes("diatas 60") || lowerQuery.includes("di atas 60") || lowerQuery.includes("tua");
 
