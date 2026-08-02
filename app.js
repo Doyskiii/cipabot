@@ -1828,9 +1828,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
           rtBadgeHeader.textContent = `${rtKey} / RW 02`;
           rtTitleHeader.innerHTML = `
-            <i data-lucide="users" style="width: 16px; height: 16px; color: #D97706;"></i>
-            Daftar Lansia di ${rtKey} (${data.total} Warga)
+            <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+              <div style="display: flex; align-items: center; gap: 6px;">
+                <i data-lucide="users" style="width: 16px; height: 16px; color: #D97706;"></i>
+                <span>Daftar Lansia di ${rtKey} (${data.total} Warga)</span>
+              </div>
+              <div style="display: flex; gap: 4px;">
+                <button class="btn-export-rt-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📥 Excel</button>
+                <button class="btn-export-rt-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📄 PDF</button>
+              </div>
+            </div>
           `;
+
+          const btnRtExcel = rtTitleHeader.querySelector('.btn-export-rt-excel');
+          const btnRtPdf = rtTitleHeader.querySelector('.btn-export-rt-pdf');
+          if (btnRtExcel) btnRtExcel.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('XLSX belum dimuat.'); return; } window.cipabotExportExcel(data.list, 'data_lansia_' + rtKey.replace(' ', '_') + '.xlsx'); });
+          if (btnRtPdf) btnRtPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Daftar Lansia ' + rtKey, data.list); });
 
           citizenListContainer.innerHTML = data.list.map((item, i) => `
             <div class="rt-citizen-item-row" data-idx="${i}" style="background-color: var(--bg-white); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease;">
@@ -2159,7 +2172,16 @@ document.addEventListener("DOMContentLoaded", () => {
           const pekKey = row.getAttribute('data-pek');
           const data = pekMap[pekKey];
           
-          listTitle.textContent = `${pekKey} (${data.total} Warga)`;
+          listTitle.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;">
+            <span>${pekKey} (${data.total} Warga)</span>
+            <button class="btn-export-item-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📥 Excel</button>
+            <button class="btn-export-item-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📄 PDF</button>
+          </div>`;
+
+          const btnExcelPek = listTitle.querySelector('.btn-export-item-excel');
+          const btnPdfPek = listTitle.querySelector('.btn-export-item-pdf');
+          if (btnExcelPek) btnExcelPek.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('XLSX belum dimuat.'); return; } window.cipabotExportExcel(data.list, 'data_pekerjaan_' + pekKey + '.xlsx'); });
+          if (btnPdfPek) btnPdfPek.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Data Pekerjaan: ' + pekKey, data.list); });
           
           listContainer.innerHTML = data.list.map((w, idx) => {
             const isMale = (w.jenis_kelamin || '').toLowerCase().includes("laki") || (w.jenis_kelamin || '').toLowerCase() === "l";
@@ -2518,7 +2540,16 @@ document.addEventListener("DOMContentLoaded", () => {
           const pndKey = row.getAttribute('data-pnd');
           const data = pndMap[pndKey];
           
-          listTitle.textContent = `${pndKey} (${data.total} Warga)`;
+          listTitle.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;">
+            <span>${pndKey} (${data.total} Warga)</span>
+            <button class="btn-export-item-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📥 Excel</button>
+            <button class="btn-export-item-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📄 PDF</button>
+          </div>`;
+
+          const btnExcelPnd = listTitle.querySelector('.btn-export-item-excel');
+          const btnPdfPnd = listTitle.querySelector('.btn-export-item-pdf');
+          if (btnExcelPnd) btnExcelPnd.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('XLSX belum dimuat.'); return; } window.cipabotExportExcel(data.list, 'data_pendidikan_' + pndKey + '.xlsx'); });
+          if (btnPdfPnd) btnPdfPnd.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Data Pendidikan: ' + pndKey, data.list); });
           
           listContainer.innerHTML = data.list.map((w, idx) => {
             const isMale = (w.jenis_kelamin || '').toLowerCase().includes("laki") || (w.jenis_kelamin || '').toLowerCase() === "l";
@@ -2817,7 +2848,16 @@ document.addEventListener("DOMContentLoaded", () => {
           const agmKey = row.getAttribute('data-agm');
           const data = agmMap[agmKey];
           
-          listTitle.textContent = `${agmKey} (${data.total} Warga)`;
+          listTitle.innerHTML = `<div style="display: flex; align-items: center; gap: 8px;">
+            <span>${agmKey} (${data.total} Warga)</span>
+            <button class="btn-export-item-excel" style="background-color: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📥 Excel</button>
+            <button class="btn-export-item-pdf" style="background-color: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 700; cursor: pointer;">📄 PDF</button>
+          </div>`;
+
+          const btnExcelAgm = listTitle.querySelector('.btn-export-item-excel');
+          const btnPdfAgm = listTitle.querySelector('.btn-export-item-pdf');
+          if (btnExcelAgm) btnExcelAgm.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('XLSX belum dimuat.'); return; } window.cipabotExportExcel(data.list, 'data_agama_' + agmKey + '.xlsx'); });
+          if (btnPdfAgm) btnPdfAgm.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Data Agama: ' + agmKey, data.list); });
           
           listContainer.innerHTML = data.list.map((w, idx) => {
             const isMale = (w.jenis_kelamin || '').toLowerCase().includes("laki") || (w.jenis_kelamin || '').toLowerCase() === "l";
