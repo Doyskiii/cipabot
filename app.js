@@ -1204,6 +1204,14 @@ document.addEventListener("DOMContentLoaded", () => {
               </div>
             `;
 
+            listView.style.display = 'none';
+            detailView.style.display = 'block';
+            scrollToBottom();
+          });
+        });
+
+        backBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
             detailView.style.display = 'none';
             listView.style.display = 'block';
             scrollToBottom();
