@@ -80,6 +80,15 @@ window.cipabotExportPdf = function(reportTitle, dataList) {
       return;
     }
 
+    // Auto refocus chat input when user returns to main window
+    window.addEventListener('focus', function onFocus() {
+      setTimeout(() => {
+        const chatInput = document.getElementById("chat-input-field");
+        if (chatInput) chatInput.focus();
+      }, 100);
+      window.removeEventListener('focus', onFocus);
+    });
+
     const printWindow = window.open('', '_blank');
     const now = new Date();
     const dateFormatted = `${now.getDate()} ${['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'][now.getMonth()]} ${now.getFullYear()}`;
@@ -160,7 +169,12 @@ window.cipabotExportPdf = function(reportTitle, dataList) {
           </div>
         </div>
         <script>
-          window.onload = function() { window.print(); }
+          window.onload = function() {
+            setTimeout(function() { window.print(); }, 150);
+          };
+          window.onafterprint = function() {
+            window.close();
+          };
         </script>
       </body>
       </html>
