@@ -1608,20 +1608,7 @@ document.addEventListener("DOMContentLoaded", () => {
           // Switch views
           listView.style.display = 'none';
           detailView.style.display = 'block';
-          
-    const lansiaCardEl = document.getElementById(cardId);
-    if (lansiaCardEl) {
-      const btnLansiaExcel = lansiaCardEl.querySelector('.btn-export-lansia-excel');
-      const btnLansiaPdf = lansiaCardEl.querySelector('.btn-export-lansia-pdf');
-      if (btnLansiaExcel) {
-        btnLansiaExcel.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportExcel(lansiaList, 'data_warga_lansia.xlsx'); });
-      }
-      if (btnLansiaPdf) {
-        btnLansiaPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Daftar Warga Lansia (Usia >= 60 Tahun)', lansiaList); });
-      }
-    }
-
-    scrollToBottom();
+          scrollToBottom();
         });
       });
 
@@ -1632,6 +1619,15 @@ document.addEventListener("DOMContentLoaded", () => {
           scrollToBottom();
         });
       });
+
+      const btnLansiaExcel = cardEl.querySelector('.btn-export-lansia-excel');
+      const btnLansiaPdf = cardEl.querySelector('.btn-export-lansia-pdf');
+      if (btnLansiaExcel) {
+        btnLansiaExcel.addEventListener('click', (e) => { e.stopPropagation(); if (typeof XLSX === 'undefined') { alert('XLSX belum dimuat.'); return; } window.cipabotExportExcel(lansiaList, 'data_warga_lansia.xlsx'); });
+      }
+      if (btnLansiaPdf) {
+        btnLansiaPdf.addEventListener('click', (e) => { e.stopPropagation(); window.cipabotExportPdf('Daftar Warga Lansia (Usia >= 60 Tahun)', lansiaList); });
+      }
     }
 
     scrollToBottom();
