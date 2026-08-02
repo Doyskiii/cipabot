@@ -3021,6 +3021,29 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       
+      // === HELPER: Extract RT numbers from query ===
+      // Returns array like ["01","07","10"] or empty [] if none specified
+      function extractRtNumbers(q) {
+        const rtNums = [];
+        // Match patterns: rt10, rt 10, rt.10, rt-10, rt:10 (single or double digit)
+        const re = /\br\.?t\.?\s*[-:]?\s*(\d{1,2})\b/gi;
+        let m;
+        while ((m = re.exec(q)) !== null) {
+          rtNums.push(String(parseInt(m[1])).padStart(2, '0'));
+        }
+        return [...new Set(rtNums)]; // deduplicate
+      }
+
+      // === HELPER: Filter dataset by RT numbers ===
+      function filterByRts(dataset, rtNums) {
+        if (!rtNums || rtNums.length === 0) return dataset;
+        return dataset.filter(w => {
+          if (!w.rt) return false;
+          const wRt = String(w.rt).replace(/\D/g, '').padStart(2, '0');
+          return rtNums.includes(wRt);
+        });
+      }
+
       // 2. Check for Lansia queries
       const isLansia = lowerQuery.includes("lansia") || lowerQuery.includes("lanjut usia") || lowerQuery.includes("manula") || lowerQuery.includes("60 tahun") || lowerQuery.includes("diatas 60") || lowerQuery.includes("di atas 60") || lowerQuery.includes("tua");
 
@@ -3033,11 +3056,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         allLansia.sort((a, b) => b.umur - a.umur); // Oldest first
 
-        // Check if query asks for per RT breakdown
-        const isPerRt = lowerQuery.includes("rt") || lowerQuery.includes("r.t") || lowerQuery.includes("tiap rt") || lowerQuery.includes("per rt") || lowerQuery.includes("sebaran");
+        // Extract specific RT numbers from the query
+        const specificRts = extractRtNumbers(lowerQuery);
+
+        // Check if query mentions RT (either specific or general)
+        const mentionsRt = lowerQuery.includes("rt") || lowerQuery.includes("r.t");
+        const isPerRt = mentionsRt && specificRts.length === 0 && (
+          lowerQuery.includes("tiap rt") || lowerQuery.includes("per rt") || lowerQuery.includes("sebaran") || lowerQuery.includes("semua rt") || lowerQuery.includes("masing")
+        );
 
         if (isPerRt) {
+          // Show all-RT breakdown card
           appendBotLansiaPerRtCard(total, allLansia);
+          saveToHistory(trimmedQuery, algo);
+          return;
+        }
+
+        // If specific RTs mentioned, filter to only those RTs
+        if (specificRts.length > 0) {
+          const filteredLansia = filterByRts(allLansia, specificRts);
+          const rtLabel = specificRts.map(r => "RT " + r).join(" & ");
+          const msgRt = filteredLansia.length > 0
+            ? `Berikut adalah data warga lansia (Usia ≥ 60 Tahun) di <strong>${rtLabel}</strong> — ditemukan <strong>${filteredLansia.length}</strong> lansia:`
+            : `Tidak ditemukan data warga lansia di <strong>${rtLabel}</strong>.`;
+          appendBotMessage(msgRt);
+          if (filteredLansia.length > 0) {
+            appendBotLansiaCard(total, filteredLansia, "all", allLansia.length);
+          }
           saveToHistory(trimmedQuery, algo);
           return;
         }
@@ -3062,7 +3107,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const jk = w.jenis_kelamin.toLowerCase();
             return jk.includes("perempuan") || jk === "wanita" || jk === "p";
           });
-          messageText = `Berikut meperoleh rincian data dan daftar warga lansia <strong>Perempuan (Wanita, Usia ≥ 60 Tahun)</strong> di Kelurahan Cipaganti:`;
+          messageText = `Berikut adalah rincian data dan daftar warga lansia <strong>Perempuan (Wanita, Usia ≥ 60 Tahun)</strong> di Kelurahan Cipaganti:`;
         } else {
           const countLaki = allLansia.filter(w => {
             const jk = w.jenis_kelamin.toLowerCase();
@@ -3105,22 +3150,37 @@ document.addEventListener("DOMContentLoaded", () => {
         saveToHistory(trimmedQuery, algo);
         return;
       }
+
       // 4. Check for Pekerjaan queries
-      const isPekerjaan = lowerQuery.includes("pekerjaan") || lowerQuery.includes("profesi") || lowerQuery.includes("status pekerjaan") || lowerQuery.includes("pegawai") || lowerQuery.includes("kerja");
+      const isPekerjaan = lowerQuery.includes("pekerjaan") || lowerQuery.includes("profesi") || lowerQuery.includes("status pekerjaan") || lowerQuery.includes("pegawai") || lowerQuery.includes("kerja") || lowerQuery.includes("bekerja") || lowerQuery.includes("tidak bekerja");
       if (isPekerjaan) {
         const hasMale = lowerQuery.includes("laki") || lowerQuery.includes("pria");
         const hasFemale = lowerQuery.includes("perempuan") || lowerQuery.includes("wanita");
         let genderFilter = "all";
         if (hasMale && !hasFemale) genderFilter = "male";
         if (hasFemale && !hasMale) genderFilter = "female";
+
+        // Extract specific RTs
+        const specificRts = extractRtNumbers(lowerQuery);
+        let dataset = DATASET_WARGA;
+        let rtLabel = "";
+        if (specificRts.length > 0) {
+          dataset = filterByRts(DATASET_WARGA, specificRts);
+          rtLabel = " di " + specificRts.map(r => "RT " + r).join(" & ");
+          if (dataset.length === 0) {
+            appendBotMessage(`Tidak ditemukan data warga${rtLabel}.`);
+            saveToHistory(trimmedQuery, algo);
+            return;
+          }
+          appendBotMessage(`Berikut adalah data <strong>pekerjaan warga${rtLabel}</strong>:`);
+        }
         
-        appendBotPekerjaanCard(DATASET_WARGA.length, DATASET_WARGA, genderFilter);
+        appendBotPekerjaanCard(DATASET_WARGA.length, dataset, genderFilter);
         saveToHistory(trimmedQuery, algo);
         return;
       }
 
-      
-      // Check for Pendidikan queries
+      // 5. Check for Pendidikan queries
       const isPendidikan = lowerQuery.includes("pendidikan") || lowerQuery.includes("sekolah") || lowerQuery.includes("kuliah") || lowerQuery.includes("sarjana") || lowerQuery.includes("lulusan");
       if (isPendidikan) {
         const hasMale = lowerQuery.includes("laki") || lowerQuery.includes("pria");
@@ -3128,16 +3188,46 @@ document.addEventListener("DOMContentLoaded", () => {
         let genderFilter = "all";
         if (hasMale && !hasFemale) genderFilter = "male";
         if (hasFemale && !hasMale) genderFilter = "female";
+
+        // Extract specific RTs
+        const specificRts = extractRtNumbers(lowerQuery);
+        let dataset = DATASET_WARGA;
+        let rtLabel = "";
+        if (specificRts.length > 0) {
+          dataset = filterByRts(DATASET_WARGA, specificRts);
+          rtLabel = " di " + specificRts.map(r => "RT " + r).join(" & ");
+          if (dataset.length === 0) {
+            appendBotMessage(`Tidak ditemukan data warga${rtLabel}.`);
+            saveToHistory(trimmedQuery, algo);
+            return;
+          }
+          appendBotMessage(`Berikut adalah data <strong>pendidikan warga${rtLabel}</strong>:`);
+        }
         
-        appendBotPendidikanCard(DATASET_WARGA.length, DATASET_WARGA, genderFilter);
+        appendBotPendidikanCard(DATASET_WARGA.length, dataset, genderFilter);
         saveToHistory(trimmedQuery, algo);
         return;
       }
 
-      // 5. Check for Agama queries
+      // 6. Check for Agama queries
       const isAgama = lowerQuery.includes("agama") || lowerQuery.includes("kepercayaan") || lowerQuery.includes("keyakinan") || lowerQuery.includes("religi");
       if (isAgama) {
-        appendBotAgamaCard(DATASET_WARGA.length, DATASET_WARGA);
+        // Extract specific RTs
+        const specificRts = extractRtNumbers(lowerQuery);
+        let dataset = DATASET_WARGA;
+        let rtLabel = "";
+        if (specificRts.length > 0) {
+          dataset = filterByRts(DATASET_WARGA, specificRts);
+          rtLabel = " di " + specificRts.map(r => "RT " + r).join(" & ");
+          if (dataset.length === 0) {
+            appendBotMessage(`Tidak ditemukan data warga${rtLabel}.`);
+            saveToHistory(trimmedQuery, algo);
+            return;
+          }
+          appendBotMessage(`Berikut adalah data <strong>agama warga${rtLabel}</strong>:`);
+        }
+
+        appendBotAgamaCard(DATASET_WARGA.length, dataset);
         saveToHistory(trimmedQuery, algo);
         return;
       }
