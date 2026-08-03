@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CIPABOT - Chatbot Pencarian Data Warga Kelurahan Cipaganti</title>
+  <title>SiWarga CIPAGANTI - Sistem Informasi Pendataan & Pencarian Data Warga</title>
   <link rel="icon" type="image/jpeg" href="logo.jpg">
-  <!-- Google Fonts Inter -->
   <link rel="stylesheet" href="style.css">
 
   <!-- PWA & Mobile Meta Tags -->
@@ -13,304 +12,679 @@
   <meta name="theme-color" content="#059669">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="CIPABOT">
+  <meta name="apple-mobile-web-app-title" content="SiWarga Cipaganti">
   <link rel="apple-touch-icon" href="logo.jpg">
-  <link rel="icon" type="image/jpeg" href="logo.jpg">
 
+  <!-- SheetJS Excel & jsPDF CDN for Exports -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body>
 
-  <!-- Sticky Navbar -->
+  <!-- Sticky Navbar Portal Sistem Informasi -->
   <nav class="navbar">
     <div class="container">
       <div class="logo-container">
         <div class="logo-icon" style="background: none; padding: 0; overflow: hidden; width: 44px; height: 44px; border-radius: 10px; flex-shrink: 0;">
-          <img src="logo.jpg" alt="CIPABOT Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
+          <img src="logo.jpg" alt="SiWarga Logo" style="width: 100%; height: 100%; object-fit: cover; border-radius: 10px;">
         </div>
         <div class="logo-text-wrapper">
-          <span class="logo-title">CIPABOT</span>
-          <span class="logo-subtitle">Chatbot Pencarian Data Warga Kelurahan Cipaganti</span>
+          <span class="logo-title" style="color: #059669;">SiWarga CIPAGANTI</span>
+          <span class="logo-subtitle">Sistem Informasi Pendataan & Pencarian Data Warga</span>
         </div>
       </div>
       <ul class="nav-links">
-        <li><a href="index.html" class="nav-link active">Dashboard</a></li>
-        <li><a href="#panduan" class="nav-link">Panduan</a></li>
-        <li><a href="#tentang" class="nav-link">Tentang</a></li>
+        <li><a href="#dashboard-section" class="nav-link active" id="nav-dashboard" onclick="siSwitchTab('dashboard'); return false;">Dashboard</a></li>
+        <li><a href="#data-warga-section" class="nav-link" id="nav-data-warga" onclick="siSwitchTab('data-warga'); return false;">Data Warga</a></li>
+        <li><a href="#benchmark-section" class="nav-link" id="nav-benchmark" onclick="siSwitchTab('benchmark'); return false;">Uji KMP &amp; BM</a></li>
+        <li><a href="chatbot.html" class="nav-link" style="display: inline-flex; align-items: center; gap: 5px; color: #059669 !important; font-weight: 700;"><i data-lucide="bot" style="width: 14px; height: 14px;"></i> Chatbot AI</a></li>
+        <li><a href="#panduan-section" class="nav-link" id="nav-panduan" onclick="siSwitchTab('panduan'); return false;">Panduan</a></li>
+        <li><a href="#tentang-section" class="nav-link" id="nav-tentang" onclick="siSwitchTab('tentang'); return false;">Tentang</a></li>
       </ul>
       <div class="nav-actions">
-        <a href="chatbot.html" class="btn btn-primary" style="padding: 8px 16px; font-size: 14px;">Mulai Chat</a>
-        <div class="user-avatar">GR</div>
+        <button class="btn btn-primary" onclick="siOpenModalAddWarga()" style="padding: 8px 16px; font-size: 13.5px; background-color: #059669;">
+          <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
+          + Data Warga
+        </button>
+        <div class="user-avatar" title="Pengurus / Admin: Gilang Ramadhan" style="background: linear-gradient(135deg, #059669, #10B981); color: white; font-weight: 800; font-size: 13px;">GR</div>
       </div>
     </div>
   </nav>
 
-  <!-- Hero Section -->
-  <header class="hero">
-    <div class="container">
-      <div class="hero-content">
-        <div class="badge">
-          <span class="badge-dot"></span>
-          Sistem Informasi Kelurahan Digital
-        </div>
-        <h1 class="hero-title">Selamat Datang di <span>CIPABOT</span></h1>
-        <p class="hero-desc">
-          CIPABOT merupakan chatbot pencarian data warga yang membantu petugas Kelurahan Cipaganti menemukan informasi penduduk secara cepat menggunakan algoritma <strong>Knuth-Morris-Pratt (KMP)</strong> dan <strong>Boyer-Moore</strong>.
-        </p>
-        <div class="hero-actions">
-          <a href="chatbot.html" class="btn btn-primary">
-            Mulai Chat
-            <i data-lucide="message-square" style="width: 18px; height: 18px;"></i>
-          </a>
-          <a href="#panduan" class="btn btn-secondary">
-            Panduan Penggunaan
-            <i data-lucide="file-text" style="width: 18px; height: 18px;"></i>
-          </a>
-        </div>
-      </div>
+  <!-- MAIN PORTAL CONTAINER -->
+  <main class="container">
 
-      <!-- Hero Interactive Mini Chatbot Simulator -->
-      <div class="hero-illustration-wrapper">
-        <div class="hero-chatbot-card">
-          <div class="chat-card-header">
-            <div class="chat-card-title">
-              <i data-lucide="bot" style="width: 20px; height: 20px; color: var(--primary);"></i>
-              <span class="chat-card-title-text">Simulator CIPABOT</span>
-            </div>
-            <div class="chat-status-indicator">
-              <span class="chat-status-dot"></span>
-              Sistem Online
-            </div>
+    <!-- ==================================================================== -->
+    <!-- SECTION 1: DASHBOARD PORTAL KEPENDUDUKAN                             -->
+    <!-- ==================================================================== -->
+    <section id="dashboard-section" class="si-section">
+      
+      <!-- Hero Banner -->
+      <div style="background: linear-gradient(135deg, #047857 0%, #10B981 100%); color: white; border-radius: var(--radius-xl); padding: 40px; margin-bottom: 32px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden;">
+        <div style="position: relative; z-index: 2; max-width: 680px;">
+          <div class="si-header-badge" style="background: rgba(255, 255, 255, 0.2); color: white; border-color: rgba(255,255,255,0.3); margin-bottom: 16px;">
+            <i data-lucide="shield-check" style="width: 16px; height: 16px;"></i>
+            Portal Resmi Kependudukan Kelurahan Cipaganti
           </div>
-          <div class="chat-card-body" id="hero-chat-body">
-            <div class="message-bubble message-bot">
-              Halo! Saya CIPABOT. Coba ketik nama warga Kelurahan Cipaganti atau klik contoh di bawah ini:
-            </div>
-            <div class="suggested-tags">
-              <button class="tag-btn">Contoh: Andri</button>
-              <button class="tag-btn">Contoh: Siti</button>
-              <button class="tag-btn">Contoh: NIK 3273...</button>
-            </div>
-          </div>
-          <div class="chat-card-footer">
-            <div class="chat-input-wrapper">
-              <input type="text" id="hero-chat-input" class="chat-input" placeholder="Ketik Nama/NIK warga...">
-              <button id="hero-send-btn" class="chat-send-btn">
-                <i data-lucide="send" style="width: 14px; height: 14px;"></i>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </header>
-
-  <!-- Statistics Section -->
-  <section class="statistics">
-    <div class="container">
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i data-lucide="database" style="width: 20px; height: 20px;"></i>
-          </div>
-          <span class="stat-title">DATA WARGA</span>
-          <span class="stat-value">35.000+</span>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i data-lucide="file-spreadsheet" style="width: 20px; height: 20px;"></i>
-          </div>
-          <span class="stat-title">DATASET</span>
-          <span class="stat-value">Microsoft Excel</span>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i data-lucide="search" style="width: 20px; height: 20px;"></i>
-          </div>
-          <span class="stat-title">ALGORITMA</span>
-          <span class="stat-value" style="font-size: 18px;">KMP & Boyer-Moore</span>
-        </div>
-        <div class="stat-card">
-          <div class="stat-icon">
-            <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
-          </div>
-          <span class="stat-title">STATUS</span>
-          <span class="stat-value">Sistem Aktif <span class="stat-dot"></span></span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Features Section -->
-  <section class="features" id="tentang">
-    <div class="container">
-      <div class="section-header">
-        <h2 class="section-title">Keunggulan CIPABOT</h2>
-        <div class="section-underline"></div>
-      </div>
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <i data-lucide="zap" style="width: 24px; height: 24px;"></i>
-          </div>
-          <h3 class="feature-title">Cepat</h3>
-          <p class="feature-desc">Pencarian data dilakukan dalam hitungan milidetik.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <i data-lucide="radar" style="width: 24px; height: 24px;"></i>
-          </div>
-          <h3 class="feature-title">Akurat</h3>
-          <p class="feature-desc">Pencocokan string presisi dengan algoritma tingkat tinggi.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <i data-lucide="message-square-text" style="width: 24px; height: 24px;"></i>
-          </div>
-          <h3 class="feature-title">Mudah Digunakan</h3>
-          <p class="feature-desc">Antarmuka chatbot yang intuitif bagi siapa saja.</p>
-        </div>
-        <div class="feature-card">
-          <div class="feature-icon-wrapper">
-            <i data-lucide="server-off" style="width: 24px; height: 24px;"></i>
-          </div>
-          <h3 class="feature-title">Tanpa Database</h3>
-          <p class="feature-desc">Sistem efisien yang bekerja langsung dari file Excel.</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- How It Works Section -->
-  <section class="how-it-works" id="panduan">
-    <div class="container">
-      <div>
-        <h2 class="section-title" style="text-align: left;">Cara Kerja CIPABOT</h2>
-        <p class="section-desc" style="text-align: left; margin-bottom: 20px;">
-          Alur kerja sistematis yang memastikan petugas mendapatkan informasi warga secara instan.
-        </p>
-        <div class="timeline">
-          <div class="timeline-item">
-            <div class="timeline-step">1</div>
-            <div class="timeline-content">
-              <h4 class="timeline-title">Masukkan Nama/NIK</h4>
-              <p class="timeline-desc">Ketik identitas warga yang ingin dicari pada kolom chat.</p>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-step">2</div>
-            <div class="timeline-content">
-              <h4 class="timeline-title">Sistem membaca Excel</h4>
-              <p class="timeline-desc">Bot mengakses dataset kependudukan langsung dari file sumber.</p>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-step">3</div>
-            <div class="timeline-content">
-              <h4 class="timeline-title">Algoritma KMP & BM melakukan pencocokan</h4>
-              <p class="timeline-desc">Proses string matching tingkat tinggi untuk memastikan akurasi data.</p>
-            </div>
-          </div>
-          <div class="timeline-item">
-            <div class="timeline-step">4</div>
-            <div class="timeline-content">
-              <h4 class="timeline-title">Data warga ditampilkan</h4>
-              <p class="timeline-desc">Informasi lengkap penduduk muncul dalam hitungan milidetik.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- String Matching Interactive Visualizer -->
-      <div class="visualizer-container">
-        <div class="visualizer-header">
-          <h3 class="visualizer-title">
-            <i data-lucide="binary" style="width: 20px; height: 20px; color: var(--primary);"></i>
-            Visualisasi String Matching
-          </h3>
-          <p class="visualizer-desc">Lihat bagaimana pola dicocokkan di dalam teks secara terstruktur.</p>
-        </div>
-        <div class="algo-toggle-pills">
-          <button class="algo-pill active" id="pill-kmp">Knuth-Morris-Pratt (KMP)</button>
-          <button class="algo-pill" id="pill-bm">Boyer-Moore (BM)</button>
-        </div>
-        <div class="string-box-group">
-          <div class="string-row">
-            <div class="string-label">Teks</div>
-            <div class="string-chars" id="text-chars">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-          <div class="string-row">
-            <div class="string-label">Pola</div>
-            <div class="string-chars" id="pattern-chars">
-              <!-- Rendered via JS -->
-            </div>
-          </div>
-        </div>
-        <div class="visualizer-stats">
-          <span>Perbandingan: <span id="visualizer-comp">0</span> karakter</span>
-          <span>Pergeseran: <span id="visualizer-shift">0</span> kali</span>
-        </div>
-        <div style="display: flex; gap: 12px; margin-top: 20px;">
-          <button class="btn btn-primary" id="btn-visualizer-next" style="padding: 8px 16px; font-size: 13px; flex: 1;">
-            Langkah Berikutnya
-          </button>
-          <button class="btn btn-secondary" id="btn-visualizer-reset" style="padding: 8px 16px; font-size: 13px;">
-            Reset
-          </button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-grid">
-        <div class="footer-brand">
-          <div class="logo-container">
-            <div class="logo-icon">
-              <i data-lucide="shield" style="width: 20px; height: 20px;"></i>
-            </div>
-            <span class="logo-title" style="font-size: 16px;">CIPABOT</span>
-          </div>
-          <p class="footer-desc">
-            Layanan digital kependudukan modern berbasis chatbot untuk efisiensi birokrasi di Kelurahan Cipaganti.
+          <h1 style="font-size: 34px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; color: white;">
+            Sistem Informasi Pendataan & Pencarian Data Warga
+          </h1>
+          <p style="font-size: 15px; opacity: 0.92; line-height: 1.6; margin-bottom: 24px;">
+            Platform pengelolaan data penduduk terpadu Kelurahan Cipaganti / RW 02. Dilengkapi Manajemen Data Warga (CRUD), Laporan Rekapitulasi, dan **Chatbot CIPABOT** berbasis Algoritma **Knuth-Morris-Pratt (KMP)** & **Boyer-Moore**.
           </p>
+          <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+            <button onclick="siSwitchTab('data-warga')" class="btn btn-secondary" style="color: #047857; font-weight: 700; border: none;">
+              <i data-lucide="table" style="width: 18px; height: 18px;"></i>
+              Kelola Data Warga
+            </button>
+            <button onclick="toggleCipabotFloatingWidget()" class="btn btn-primary" style="background: #064E3B; border: 1px solid rgba(255,255,255,0.2);">
+              <i data-lucide="bot" style="width: 18px; height: 18px;"></i>
+              Tanya CIPABOT AI
+            </button>
+          </div>
         </div>
-        <div class="footer-links-col">
-          <h4 class="footer-title">Tujuan Penelitian</h4>
-          <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6;">
-            Research Prototype - Tugas Akhir Program Studi Sistem Informasi, Universitas Kebangsaan Republik Indonesia.
-          </p>
+      </div>
+
+      <!-- Stat Cards Grid -->
+      <div class="si-stats-grid">
+        <div class="si-stat-card">
+          <div class="si-stat-icon si-stat-green">
+            <i data-lucide="users" style="width: 26px; height: 26px;"></i>
+          </div>
+          <div class="si-stat-content">
+            <span class="si-stat-number" id="dash-total-warga">--</span>
+            <span class="si-stat-label">Total Penduduk Terdaftar</span>
+          </div>
         </div>
-        <div class="footer-links-col">
-          <h4 class="footer-title">Kontak & Lokasi</h4>
-          <ul class="footer-links">
-            <li>Bandung, Jawa Barat, Indonesia</li>
-            <li>Kantor Kelurahan Cipaganti</li>
-            <li>support@cipabot.id</li>
+
+        <div class="si-stat-card">
+          <div class="si-stat-icon si-stat-blue">
+            <i data-lucide="home" style="width: 26px; height: 26px;"></i>
+          </div>
+          <div class="si-stat-content">
+            <span class="si-stat-number" id="dash-total-kk">--</span>
+            <span class="si-stat-label">Kepala Keluarga (KK)</span>
+          </div>
+        </div>
+
+        <div class="si-stat-card">
+          <div class="si-stat-icon si-stat-purple">
+            <i data-lucide="map-pin" style="width: 26px; height: 26px;"></i>
+          </div>
+          <div class="si-stat-content">
+            <span class="si-stat-number">10 RT / RW 02</span>
+            <span class="si-stat-label">Wilayah Kelurahan Cipaganti</span>
+          </div>
+        </div>
+
+        <div class="si-stat-card">
+          <div class="si-stat-icon si-stat-amber">
+            <i data-lucide="zap" style="width: 26px; height: 26px;"></i>
+          </div>
+          <div class="si-stat-content">
+            <span class="si-stat-number" style="font-size: 20px;">KMP & Boyer-Moore</span>
+            <span class="si-stat-label">Algoritma Pencarian Aktif</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analytics & Demographics Grid -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
+        <!-- Gender Breakdown Card -->
+        <div class="si-card" style="padding: 24px; margin-bottom: 0;">
+          <div class="si-card-title-group" style="margin-bottom: 20px;">
+            <i data-lucide="pie-chart" style="width: 20px; height: 20px; color: #059669;"></i>
+            <h3 class="si-card-title">Demografi Jenis Kelamin</h3>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; margin-bottom: 6px;">
+                <span>Laki-Laki</span>
+                <span id="dash-gender-l-val">-- Warga</span>
+              </div>
+              <div style="width: 100%; height: 12px; background-color: #E2E8F0; border-radius: 6px; overflow: hidden;">
+                <div id="dash-gender-l-bar" style="width: 50%; height: 100%; background-color: #2563EB; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+            <div>
+              <div style="display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 600; margin-bottom: 6px;">
+                <span>Perempuan</span>
+                <span id="dash-gender-p-val">-- Warga</span>
+              </div>
+              <div style="width: 100%; height: 12px; background-color: #E2E8F0; border-radius: 6px; overflow: hidden;">
+                <div id="dash-gender-p-bar" style="width: 50%; height: 100%; background-color: #DB2777; transition: width 0.5s ease;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Access Module Card -->
+        <div class="si-card" style="padding: 24px; margin-bottom: 0; background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);">
+          <div class="si-card-title-group" style="margin-bottom: 16px;">
+            <i data-lucide="cpu" style="width: 20px; height: 20px; color: #2563EB;"></i>
+            <h3 class="si-card-title">Fitur Unggulan Sistem</h3>
+          </div>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 12px; font-size: 13.5px; color: #334155;">
+            <li style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="check-circle-2" style="width: 18px; height: 18px; color: #10B981;"></i>
+              <strong>Manajemen Penduduk (CRUD):</strong> Tambah, edit, dan hapus data warga secara instan.
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="check-circle-2" style="width: 18px; height: 18px; color: #10B981;"></i>
+              <strong>Pencarian KMP & Boyer-Moore:</strong> Pencarian string presisi tinggi dengan milidetik response time.
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="check-circle-2" style="width: 18px; height: 18px; color: #10B981;"></i>
+              <strong>Chatbot CIPABOT Interaktif:</strong> Chatbot floating terintegrasi di portal web.
+            </li>
+            <li style="display: flex; align-items: center; gap: 10px;">
+              <i data-lucide="check-circle-2" style="width: 18px; height: 18px; color: #10B981;"></i>
+              <strong>Ekspor Laporan (Excel & PDF):</strong> Cetak rekapitulasi data warga siap pakai.
+            </li>
           </ul>
         </div>
       </div>
+
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 2: MODUL MANAJEMEN DATA WARGA (CRUD TABLE)                  -->
+    <!-- ==================================================================== -->
+    <section id="data-warga-section" class="si-section si-section-hidden">
+      
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
+        <div>
+          <span class="si-header-badge">
+            <i data-lucide="database" style="width: 14px; height: 14px;"></i> Modul Pendataan
+          </span>
+          <h2 class="si-page-title">Manajemen Data Penduduk Warga</h2>
+          <p class="si-page-desc" style="margin-bottom: 0;">Kelola, filter, dan cari data kependudukan Kelurahan Cipaganti secara real-time.</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button onclick="siExportCurrentExcel()" class="btn btn-secondary" style="padding: 9px 16px; font-size: 13px; color: #047857; border-color: #A7F3D0; background-color: #ECFDF5;">
+            <i data-lucide="file-spreadsheet" style="width: 16px; height: 16px;"></i> Ekspor Excel
+          </button>
+          <button onclick="siExportCurrentPdf()" class="btn btn-secondary" style="padding: 9px 16px; font-size: 13px; color: #B45309; border-color: #FDE68A; background-color: #FEF3C7;">
+            <i data-lucide="file-text" style="width: 16px; height: 16px;"></i> Cetak PDF
+          </button>
+          <button onclick="siOpenModalAddWarga()" class="btn btn-primary" style="padding: 9px 16px; font-size: 13px; background-color: #059669;">
+            <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Tambah Warga
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Table Container -->
+      <div class="si-card">
+        
+        <!-- Toolbar Filters -->
+        <div class="si-table-toolbar">
+          <!-- Search input powered by KMP algorithm -->
+          <div class="si-search-input-wrapper">
+            <i data-lucide="search" style="width: 18px; height: 18px;"></i>
+            <input type="text" id="si-search-input" class="si-search-input" placeholder="Cari Nama, NIK, KK, atau Alamat Warga (Powered by KMP & BM)..." onkeyup="siHandleTableSearch()">
+          </div>
+
+          <div class="si-filter-group">
+            <select id="si-filter-rt" class="si-select" onchange="siHandleTableFilter()">
+              <option value="ALL">Semua RT (RT 01 - 10)</option>
+              <option value="01">RT 01</option>
+              <option value="02">RT 02</option>
+              <option value="03">RT 03</option>
+              <option value="04">RT 04</option>
+              <option value="05">RT 05</option>
+              <option value="06">RT 06</option>
+              <option value="07">RT 07</option>
+              <option value="08">RT 08</option>
+              <option value="09">RT 09</option>
+              <option value="10">RT 10</option>
+            </select>
+
+            <select id="si-filter-gender" class="si-select" onchange="siHandleTableFilter()">
+              <option value="ALL">Semua Gender</option>
+              <option value="L">Laki-Laki</option>
+              <option value="P">Perempuan</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Data Table -->
+        <div class="si-table-responsive">
+          <table class="si-table">
+            <thead>
+              <tr>
+                <th style="width: 45px; text-align: center;">No</th>
+                <th>Nama Lengkap</th>
+                <th>NIK</th>
+                <th>No. KK</th>
+                <th>Gender</th>
+                <th>Umur</th>
+                <th>RT / RW</th>
+                <th>Pekerjaan</th>
+                <th>Alamat</th>
+                <th style="width: 120px; text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="si-table-tbody">
+              <!-- Rendered dynamically by JS -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Table Footer Pagination -->
+        <div class="si-table-footer">
+          <div class="si-pagination-info" id="si-table-pagination-info">
+            Menampilkan 0 dari 0 data warga
+          </div>
+          <div class="si-pagination" id="si-table-pagination-btns">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 3: MODUL ANALISIS & BENCHMARK ALGORITMA KMP VS BOYER-MOORE    -->
+    <!-- ==================================================================== -->
+    <section id="benchmark-section" class="si-section si-section-hidden">
+      
+      <div style="margin-bottom: 24px;">
+        <span class="si-header-badge" style="background-color: #EFF6FF; color: #1D4ED8; border-color: #BFDBFE;">
+          <i data-lucide="cpu" style="width: 14px; height: 14px;"></i> Core Research Module
+        </span>
+        <h2 class="si-page-title">Panel Analisis & Benchmark Algoritma</h2>
+        <p class="si-page-desc">Pengujian dan komparasi langsung performa pencarian string antara **Knuth-Morris-Pratt (KMP)** dan **Boyer-Moore (BM)**.</p>
+      </div>
+
+      <!-- Test Search Box -->
+      <div class="si-card" style="padding: 24px; margin-bottom: 24px;">
+        <h4 style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main);">
+          Uji Coba Pencarian Kata Kunci Data Warga
+        </h4>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <input type="text" id="si-bench-keyword" class="si-input" placeholder="Masukkan pola nama/NIK/alamat (contoh: Ahmad, Siti, 3273...)" style="flex: 1; min-width: 280px;" value="Ahmad">
+          <button onclick="siRunAlgorithmBenchmark()" class="btn btn-primary" style="background-color: #2563EB;">
+            <i data-lucide="play" style="width: 16px; height: 16px;"></i>
+            Jalankan Benchmark
+          </button>
+        </div>
+      </div>
+
+      <!-- Benchmark Side-by-Side Comparison -->
+      <div class="si-benchmark-comparison-grid">
+        
+        <!-- KMP Card -->
+        <div class="si-algo-card" id="card-algo-kmp">
+          <span class="si-algo-badge badge-kmp">Knuth-Morris-Pratt</span>
+          <h3 style="font-size: 20px; font-weight: 800; color: #1E3A8A; margin-bottom: 16px;">Algoritma KMP</h3>
+          
+          <div class="si-metric-row">
+            <span>Waktu Eksekusi:</span>
+            <span class="si-metric-val" id="bench-kmp-time" style="color: #2563EB;">0.00 ms</span>
+          </div>
+          <div class="si-metric-row">
+            <span>Perbandingan Karakter:</span>
+            <span class="si-metric-val" id="bench-kmp-comps">0 kali</span>
+          </div>
+          <div class="si-metric-row">
+            <span>Jumlah Match (Ditemukan):</span>
+            <span class="si-metric-val" id="bench-kmp-matches">0 record</span>
+          </div>
+          <div class="si-metric-row">
+            <span>Kompleksitas Waktu:</span>
+            <span class="si-metric-val" style="font-family: monospace;">O(n + m)</span>
+          </div>
+        </div>
+
+        <!-- Boyer-Moore Card -->
+        <div class="si-algo-card" id="card-algo-bm">
+          <span class="si-algo-badge badge-bm">Boyer-Moore</span>
+          <h3 style="font-size: 20px; font-weight: 800; color: #581C87; margin-bottom: 16px;">Algoritma Boyer-Moore</h3>
+          
+          <div class="si-metric-row">
+            <span>Waktu Eksekusi:</span>
+            <span class="si-metric-val" id="bench-bm-time" style="color: #9333EA;">0.00 ms</span>
+          </div>
+          <div class="si-metric-row">
+            <span>Perbandingan Karakter:</span>
+            <span class="si-metric-val" id="bench-bm-comps">0 kali</span>
+          </div>
+          <div class="si-metric-row">
+            <span>Jumlah Match (Ditemukan):</span>
+            <span class="si-metric-val" id="bench-bm-matches">0 record</span>
+          </div>
+          <div class="si-metric-row">
+            <span>Kompleksitas Waktu:</span>
+            <span class="si-metric-val" style="font-family: monospace;">O(n / m) Best</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Winner & Analysis Banner -->
+      <div id="si-bench-result-summary" style="margin-top: 24px; padding: 20px; border-radius: var(--radius-lg); background-color: #ECFDF5; border: 1px solid #A7F3D0; display: flex; align-items: center; gap: 16px;">
+        <i data-lucide="award" style="width: 32px; height: 32px; color: #059669; flex-shrink: 0;"></i>
+        <div>
+          <h4 style="font-size: 16px; font-weight: 700; color: #047857;" id="bench-summary-title">Hasil Analisis Komparasi</h4>
+          <p style="font-size: 13.5px; color: #065F46; margin-top: 4px;" id="bench-summary-desc">Tekan tombol "Jalankan Benchmark" untuk membandingkan performa secara empiris.</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 4: PANDUAN & PENGGUNAAN SISTEM INFORMASI                    -->
+    <!-- ==================================================================== -->
+    <section id="panduan-section" class="si-section si-section-hidden">
+      <div style="margin-bottom: 24px;">
+        <span class="si-header-badge">
+          <i data-lucide="book-open" style="width: 14px; height: 14px;"></i> Petunjuk Penggunaan
+        </span>
+        <h2 class="si-page-title">Panduan Operasional Portal SiWarga</h2>
+        <p class="si-page-desc">Petunjuk bagi petugas Kelurahan Cipaganti dan Pengurus RW 02 dalam mengoperasikan sistem.</p>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background-color: #ECFDF5; color: #059669;">
+            <i data-lucide="layout-dashboard" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">1. Pantau Dashboard</h3>
+          <p class="feature-desc">Lihat ringkasan statistik kependudukan, total KK, dan demografi gender warga secara otomatis.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background-color: #EFF6FF; color: #2563EB;">
+            <i data-lucide="table" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">2. Kelola Data Warga (CRUD)</h3>
+          <p class="feature-desc">Tambah warga baru, edit profil warga, hapus data, dan lakukan filter RT/RW dengan cepat.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background-color: #F3E8FF; color: #9333EA;">
+            <i data-lucide="message-square" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">3. Manfaatkan CIPABOT Widget</h3>
+          <p class="feature-desc">Klik ikon melayang CIPABOT di pojok kanan bawah untuk mencari data warga melalui percakapan AI.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon-wrapper" style="background-color: #FEF3C7; color: #D97706;">
+            <i data-lucide="file-spreadsheet" style="width: 24px; height: 24px;"></i>
+          </div>
+          <h3 class="feature-title">4. Unduh Laporan</h3>
+          <p class="feature-desc">Cetak laporan data warga ke dalam format Excel (.xlsx) atau PDF siap pakai untuk keperluan administratif.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================================================================== -->
+    <!-- SECTION 5: TENTANG SISTEM & PENELITIAN                               -->
+    <!-- ==================================================================== -->
+    <section id="tentang-section" class="si-section si-section-hidden">
+      <div style="margin-bottom: 24px;">
+        <span class="si-header-badge">
+          <i data-lucide="info" style="width: 14px; height: 14px;"></i> Tentang Sistem
+        </span>
+        <h2 class="si-page-title">Tentang SiWarga CIPAGANTI</h2>
+        <p class="si-page-desc">Informasi mengenai penelitian, pengembang, dan teknologi yang digunakan dalam sistem ini.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px;">
+        <!-- Tentang Penelitian -->
+        <div class="si-card" style="padding: 28px; margin-bottom: 0;">
+          <div class="si-card-title-group" style="margin-bottom: 20px;">
+            <i data-lucide="book-open" style="width: 20px; height: 20px; color: #059669;"></i>
+            <h3 class="si-card-title">Tentang Penelitian</h3>
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+            <tr><td style="padding: 8px 0; color: #64748B; font-weight: 600; width: 40%;">Judul</td><td style="padding: 8px 0;">Analisis Perbandingan Algoritma KMP dan Boyer-Moore dalam Sistem Informasi Pendataan Data Warga</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748B; font-weight: 600;">Studi Kasus</td><td style="padding: 8px 0;">Kelurahan Cipaganti, Kecamatan Coblong, Kota Bandung</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748B; font-weight: 600;">Institusi</td><td style="padding: 8px 0;">Universitas Kebangsaan Republik Indonesia (UKRI)</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748B; font-weight: 600;">Program Studi</td><td style="padding: 8px 0;">S1 Sistem Informasi</td></tr>
+            <tr><td style="padding: 8px 0; color: #64748B; font-weight: 600;">Tahun</td><td style="padding: 8px 0;">2026</td></tr>
+          </table>
+        </div>
+
+        <!-- Tentang Pengembang -->
+        <div class="si-card" style="padding: 28px; margin-bottom: 0; background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);">
+          <div class="si-card-title-group" style="margin-bottom: 20px;">
+            <i data-lucide="user" style="width: 20px; height: 20px; color: #059669;"></i>
+            <h3 class="si-card-title">Pengembang Sistem</h3>
+          </div>
+          <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
+            <div style="width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, #059669, #10B981); display: flex; align-items: center; justify-content: center; color: white; font-size: 22px; font-weight: 800; flex-shrink: 0;">GR</div>
+            <div>
+              <div style="font-size: 18px; font-weight: 800; color: #0F172A;">Gilang Ramadhan</div>
+              <div style="font-size: 13px; color: #64748B; margin-top: 2px;">NIM: 20221320033</div>
+              <div style="font-size: 13px; color: #64748B;">S1 Sistem Informasi &mdash; UKRI</div>
+            </div>
+          </div>
+          <p style="font-size: 13.5px; color: #334155; line-height: 1.6;">Sistem ini dikembangkan sebagai Tugas Akhir / Skripsi dengan fokus penelitian pada perbandingan performa algoritma <strong>Knuth-Morris-Pratt (KMP)</strong> dan <strong>Boyer-Moore</strong> dalam konteks pencarian data kependudukan.</p>
+        </div>
+      </div>
+
+      <!-- Teknologi yang Digunakan -->
+      <div class="si-card" style="padding: 28px;">
+        <div class="si-card-title-group" style="margin-bottom: 20px;">
+          <i data-lucide="cpu" style="width: 20px; height: 20px; color: #2563EB;"></i>
+          <h3 class="si-card-title">Teknologi &amp; Algoritma yang Digunakan</h3>
+        </div>
+        <div class="features-grid" style="gap: 16px;">
+          <div class="feature-card" style="padding: 20px;">
+            <div class="feature-icon-wrapper" style="background-color: #EFF6FF; color: #2563EB;"><i data-lucide="code-2" style="width: 22px; height: 22px;"></i></div>
+            <h3 class="feature-title">HTML5 / CSS3 / JavaScript</h3>
+            <p class="feature-desc">Pengembangan Frontend murni tanpa framework, membuktikan efisiensi algoritma tanpa overhead library.</p>
+          </div>
+          <div class="feature-card" style="padding: 20px;">
+            <div class="feature-icon-wrapper" style="background-color: #ECFDF5; color: #059669;"><i data-lucide="search" style="width: 22px; height: 22px;"></i></div>
+            <h3 class="feature-title">Knuth-Morris-Pratt (KMP)</h3>
+            <p class="feature-desc">Algoritma pencocokan string dengan preprocessing LPS (Longest Prefix Suffix) berkompleksitas O(n + m).</p>
+          </div>
+          <div class="feature-card" style="padding: 20px;">
+            <div class="feature-icon-wrapper" style="background-color: #F3E8FF; color: #9333EA;"><i data-lucide="zap" style="width: 22px; height: 22px;"></i></div>
+            <h3 class="feature-title">Boyer-Moore</h3>
+            <p class="feature-desc">Algoritma pencarian dengan heuristik Bad Character &amp; Good Suffix. Unggul pada pola panjang dan teks besar.</p>
+          </div>
+          <div class="feature-card" style="padding: 20px;">
+            <div class="feature-icon-wrapper" style="background-color: #FEF3C7; color: #D97706;"><i data-lucide="file-spreadsheet" style="width: 22px; height: 22px;"></i></div>
+            <h3 class="feature-title">Dataset Excel &amp; JSON</h3>
+            <p class="feature-desc">Data warga dalam format Excel (.xlsx) dapat diunggah langsung ke chatbot untuk pengujian real-world.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ==================================================================== -->
+  <!-- FLOATING CIPABOT CHATBOT WIDGET (Pojok Kanan Bawah)                 -->
+  <!-- ==================================================================== -->
+  <div id="cipabot-floating-widget">
+    
+    <!-- Floating Launcher Trigger Button -->
+    <button class="chat-widget-trigger" id="cipabot-widget-trigger" onclick="toggleCipabotFloatingWidget()" title="Tanya CIPABOT - Asisten Pencarian Data Warga">
+      <i data-lucide="bot" style="width: 28px; height: 28px;"></i>
+      <span class="chat-widget-badge"></span>
+    </button>
+
+    <!-- Floating Chat Window Container -->
+    <div class="chat-widget-window" id="cipabot-widget-window">
+      
+      <!-- Widget Header -->
+      <div class="chat-widget-header">
+        <div class="chat-widget-header-title">
+          <div class="chat-widget-avatar">CB</div>
+          <div class="chat-widget-info">
+            <span class="chat-widget-name">CIPABOT Assistant</span>
+            <span class="chat-widget-status">
+              <span style="width: 7px; height: 7px; background-color: #34D399; border-radius: 50%; display: inline-block;"></span> Online | KMP & BM
+            </span>
+          </div>
+        </div>
+        <button class="chat-widget-close" onclick="toggleCipabotFloatingWidget()" title="Tutup Chat">
+          <i data-lucide="x" style="width: 18px; height: 18px;"></i>
+        </button>
+      </div>
+
+      <!-- Widget Chat Body -->
+      <div class="chat-widget-body" id="cipabot-widget-chat-body">
+        <div class="message-bubble message-bot" style="background-color: white; border: 1px solid #E2E8F0; padding: 12px; border-radius: 12px; font-size: 13px;">
+          Halo! Saya **CIPABOT**, asisten pintar Sistem Informasi Kelurahan Cipaganti.
+          <br><br>
+          Ketik nama atau NIK warga yang ingin dicari, atau pilih contoh quick action di bawah ini:
+        </div>
+        
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px;">
+          <button onclick="cipabotWidgetQuickSearch('Ahmad')" style="font-size: 11px; padding: 5px 10px; border-radius: 12px; border: 1px solid #CBD5E1; background: white; cursor: pointer;">🔍 Cari: Ahmad</button>
+          <button onclick="cipabotWidgetQuickSearch('Siti')" style="font-size: 11px; padding: 5px 10px; border-radius: 12px; border: 1px solid #CBD5E1; background: white; cursor: pointer;">🔍 Cari: Siti</button>
+          <button onclick="cipabotWidgetQuickSearch('RT 02')" style="font-size: 11px; padding: 5px 10px; border-radius: 12px; border: 1px solid #CBD5E1; background: white; cursor: pointer;">🏠 Data RT 02</button>
+        </div>
+      </div>
+
+      <!-- Widget Footer Input -->
+      <div class="chat-widget-footer">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <select id="cipabot-widget-algo-select" class="chat-widget-algo-select">
+            <option value="kmp">Algoritma: KMP</option>
+            <option value="bm">Algoritma: Boyer-Moore</option>
+          </select>
+          <a href="chatbot.html" target="_blank" style="font-size: 11px; color: #059669; font-weight: 600; text-decoration: none;">
+            Tampilan Penuh ↗
+          </a>
+        </div>
+        
+        <div class="chat-widget-input-group">
+          <input type="text" id="cipabot-widget-input" class="chat-widget-input" placeholder="Ketik nama / NIK warga..." onkeypress="if(event.key==='Enter') cipabotWidgetSendMsg()">
+          <button class="chat-widget-send" onclick="cipabotWidgetSendMsg()" title="Kirim">
+            <i data-lucide="send" style="width: 16px; height: 16px;"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ==================================================================== -->
+  <!-- MODAL FORM TAMBAH / EDIT DATA WARGA                                  -->
+  <!-- ==================================================================== -->
+  <div class="si-modal-backdrop" id="si-modal-warga">
+    <div class="si-modal-dialog">
+      <div class="si-modal-header">
+        <h3 class="si-modal-title" id="si-modal-warga-title">Tambah Data Warga Baru</h3>
+        <button class="si-modal-close" onclick="siCloseModalWarga()">✕</button>
+      </div>
+      <div class="si-modal-body">
+        <form id="si-warga-form" onsubmit="siSaveWarga(event)">
+          <input type="hidden" id="si-form-index" value="-1">
+          
+          <div class="si-form-grid">
+            
+            <div class="si-form-group full-width">
+              <label class="si-label">Nama Lengkap Warga *</label>
+              <input type="text" id="si-form-nama" class="si-input" placeholder="Contoh: Ahmad Subagja" required>
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">Nomor Induk Kependudukan (NIK) *</label>
+              <input type="text" id="si-form-nik" class="si-input" placeholder="16 digit NIK" required maxlength="16">
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">Nomor Kartu Keluarga (No. KK) *</label>
+              <input type="text" id="si-form-kk" class="si-input" placeholder="16 digit No KK" required maxlength="16">
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">Jenis Kelamin *</label>
+              <select id="si-form-gender" class="si-input" required>
+                <option value="Laki-Laki">Laki-Laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">Tanggal Lahir (YYYY-MM-DD)</label>
+              <input type="text" id="si-form-tgl-lahir" class="si-input" placeholder="Contoh: 1990-05-14">
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">RT *</label>
+              <select id="si-form-rt" class="si-input" required>
+                <option value="01">RT 01</option>
+                <option value="02">RT 02</option>
+                <option value="03">RT 03</option>
+                <option value="04">RT 04</option>
+                <option value="05">RT 05</option>
+                <option value="06">RT 06</option>
+                <option value="07">RT 07</option>
+                <option value="08">RT 08</option>
+                <option value="09">RT 09</option>
+                <option value="10">RT 10</option>
+              </select>
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">RW *</label>
+              <input type="text" id="si-form-rw" class="si-input" value="02" required readonly style="background-color: #F1F5F9;">
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">Pekerjaan / Profesi</label>
+              <input type="text" id="si-form-pekerjaan" class="si-input" placeholder="Contoh: Wiraswasta, PNS, Mahasiswa">
+            </div>
+
+            <div class="si-form-group">
+              <label class="si-label">Status Pernikahan</label>
+              <select id="si-form-status-kawin" class="si-input">
+                <option value="Belum Kawin">Belum Kawin</option>
+                <option value="Kawin">Kawin</option>
+                <option value="Cerai Hidup">Cerai Hidup</option>
+                <option value="Cerai Mati">Cerai Mati</option>
+              </select>
+            </div>
+
+            <div class="si-form-group full-width">
+              <label class="si-label">Alamat Lengkap</label>
+              <input type="text" id="si-form-alamat" class="si-input" placeholder="Contoh: Jl. Cipaganti No. 45 RT 02/RW 02">
+            </div>
+
+          </div>
+
+          <button type="submit" id="si-btn-submit-hidden" style="display: none;"></button>
+        </form>
+      </div>
+      <div class="si-modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="siCloseModalWarga()">Batal</button>
+        <button type="button" class="btn btn-primary" onclick="document.getElementById('si-btn-submit-hidden').click()" style="background-color: #059669;">
+          Simpan Data Warga
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Portal -->
+  <footer class="footer" style="margin-top: 60px;">
+    <div class="container">
       <div class="footer-bottom">
-        <span>© 2026 CIPABOT. All rights reserved.</span>
-        <span>Bandung, Jawa Barat</span>
+        <span>© 2026 SiWarga CIPAGANTI - Sistem Informasi Pendataan Data Warga. Gilang Ramadhan (20221320033).</span>
+        <span>Kelurahan Cipaganti, Kota Bandung</span>
       </div>
     </div>
   </footer>
 
   <!-- Lucide Icons CDN -->
   <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Application Script -->
   <script src="app.js"></script>
 
-  <!-- Register PWA Service Worker -->
+  <!-- PWA Service Worker -->
   <script>
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('[PWA] Service Worker terdaftar:', reg.scope))
-          .catch(err => console.warn('[PWA] Gagal mendaftar Service Worker:', err));
+          .then(reg => console.log('[SiWarga PWA] SW registered:', reg.scope))
+          .catch(err => console.warn('[SiWarga PWA] SW failed:', err));
       });
     }
   </script>

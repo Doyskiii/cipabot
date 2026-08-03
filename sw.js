@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cipabot-v1.0.0';
+const CACHE_NAME = 'siwarga-v2.0.0';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -6,16 +6,13 @@ const ASSETS_TO_CACHE = [
   '/style.css',
   '/app.js',
   '/manifest.json',
-  '/logo.jpg',
-  'https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js',
-  'https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js',
-  'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap'
+  '/logo.jpg'
 ];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Pre-caching App Shell');
+      console.log('[ServiceWorker] Pre-caching App Shell v2');
       return cache.addAll(ASSETS_TO_CACHE).catch(err => console.warn('Cache addAll warning:', err));
     })
   );
@@ -38,20 +35,20 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
+// Network First strategy to ensure always fresh content
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch background update
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-      return fetch(event.request);
-    })
+    fetch(event.request)
+      .then((networkResponse) => {
+        if (networkResponse && networkResponse.status === 200) {
+          const responseClone = networkResponse.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, responseClone));
+        }
+        return networkResponse;
+      })
+      .catch(() => {
+        return caches.match(event.request);
+      })
   );
 });

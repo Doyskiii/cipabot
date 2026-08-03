@@ -4129,14 +4129,539 @@ function initTimelineVisualizer() {
     }
   });
 
-  resetBtn.addEventListener("click", () => {
-    stateIndex = 0;
-    renderState();
+  // Initial load
+  if (kmpPill && bmPill && stepBtn) {
+    selectAlgo("kmp");
+  }
+}
+
+/* ==========================================================================
+   SIWARGA CIPAGANTI - PORTAL SISTEM INFORMASI CONTROLLER
+   ========================================================================== */
+
+// Default Dataset Warga Sample (Kelurahan Cipaganti RW 02)
+const siDefaultWargaDataset = [
+  { nama: "Ahmad Subagja", nik: "3273011405820001", kk: "3273010101100001", jenis_kelamin: "Laki-Laki", tanggal_lahir: "1982-05-14", rt: "02", rw: "02", pekerjaan: "Wiraswasta", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 12 RT 02/RW 02" },
+  { nama: "Siti Nurhaliza", nik: "3273014812850002", kk: "3273010101100001", jenis_kelamin: "Perempuan", tanggal_lahir: "1985-12-08", rt: "02", rw: "02", pekerjaan: "Ibu Rumah Tangga", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 12 RT 02/RW 02" },
+  { nama: "Budi Santoso", nik: "3273012010750003", kk: "3273010101100002", jenis_kelamin: "Laki-Laki", tanggal_lahir: "1975-10-20", rt: "01", rw: "02", pekerjaan: "PNS / ASN", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 45 RT 01/RW 02" },
+  { nama: "Dewi Lestari", nik: "3273016503920004", kk: "3273010101100003", jenis_kelamin: "Perempuan", tanggal_lahir: "1992-03-25", rt: "03", rw: "02", pekerjaan: "Karyawan Swasta", status_pernikahan: "Kawin", alamat: "Gg. Laksana No. 8 RT 03/RW 02" },
+  { nama: "Eko Prasetyo", nik: "3273011508880005", kk: "3273010101100004", jenis_kelamin: "Laki-Laki", tanggal_lahir: "1988-08-15", rt: "04", rw: "02", pekerjaan: "Guru / Dosen", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 78 RT 04/RW 02" },
+  { nama: "Fitriani Rahayu", nik: "3273015206950006", kk: "3273010101100004", jenis_kelamin: "Perempuan", tanggal_lahir: "1995-06-12", rt: "04", rw: "02", pekerjaan: "Desainer Grafis", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 78 RT 04/RW 02" },
+  { nama: "Gilang Ramadhan", nik: "3273011809010007", kk: "3273010101100005", jenis_kelamin: "Laki-Laki", tanggal_lahir: "2001-09-18", rt: "02", rw: "02", pekerjaan: "Mahasiswa / Developer", status_pernikahan: "Belum Kawin", alamat: "Jl. Cipaganti No. 24 RT 02/RW 02" },
+  { nama: "Hendra Wijaya", nik: "3273010411700008", kk: "3273010101100006", jenis_kelamin: "Laki-Laki", tanggal_lahir: "1970-11-04", rt: "05", rw: "02", pekerjaan: "Pedagang", status_pernikahan: "Kawin", alamat: "Gg. Bunga No. 3 RT 05/RW 02" },
+  { nama: "Indah Permata", nik: "3273016101980009", kk: "3273010101100007", jenis_kelamin: "Perempuan", tanggal_lahir: "1998-01-21", rt: "06", rw: "02", pekerjaan: "Arsitek", status_pernikahan: "Belum Kawin", alamat: "Jl. Cipaganti No. 102 RT 06/RW 02" },
+  { nama: "Joko Susilo", nik: "3273012802800010", kk: "3273010101100008", jenis_kelamin: "Laki-Laki", tanggal_lahir: "1980-02-28", rt: "07", rw: "02", pekerjaan: "TNI / POLRI", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 115 RT 07/RW 02" },
+  { nama: "Kartika Putri", nik: "3273014507960011", kk: "3273010101100008", jenis_kelamin: "Perempuan", tanggal_lahir: "1996-07-05", rt: "07", rw: "02", pekerjaan: "Perawat", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 115 RT 07/RW 02" },
+  { nama: "Lukman Hakim", nik: "3273011212830012", kk: "3273010101100009", jenis_kelamin: "Laki-Laki", tanggal_lahir: "1983-12-12", rt: "08", rw: "02", pekerjaan: "Dokter", status_pernikahan: "Kawin", alamat: "Gg. Mawar No. 15 RT 08/RW 02" },
+  { nama: "Maya Sundari", nik: "3273015010900013", kk: "3273010101100010", jenis_kelamin: "Perempuan", tanggal_lahir: "1990-10-10", rt: "09", rw: "02", pekerjaan: "Apoteker", status_pernikahan: "Kawin", alamat: "Jl. Cipaganti No. 140 RT 09/RW 02" },
+  { nama: "Naufal Farisi", nik: "3273010505020014", kk: "3273010101100011", jenis_kelamin: "Laki-Laki", tanggal_lahir: "2002-05-05", rt: "10", rw: "02", pekerjaan: "Pelajar / Mahasiswa", status_pernikahan: "Belum Kawin", alamat: "Jl. Cipaganti No. 155 RT 10/RW 02" }
+];
+
+let siDataList = [];
+let siCurrentPage = 1;
+const siItemsPerPage = 10;
+let currentSiFilteredList = [];
+
+// Initialize Portal Data
+function siInitPortal() {
+  const saved = localStorage.getItem("si_warga_data");
+  if (saved) {
+    try {
+      siDataList = JSON.parse(saved);
+    } catch(e) {
+      siDataList = [...siDefaultWargaDataset];
+    }
+  } else {
+    siDataList = [...siDefaultWargaDataset];
+    localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
+  }
+
+  currentSiFilteredList = [...siDataList];
+  siRenderDashboardStats();
+  siRenderTable();
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+// Tab Switcher Controller
+window.siSwitchTab = function(tabName) {
+  const sections = ['dashboard', 'data-warga', 'benchmark', 'panduan', 'tentang'];
+  sections.forEach(s => {
+    const el = document.getElementById(`${s}-section`);
+    if (el) {
+      if (s === tabName) {
+        el.classList.remove('si-section-hidden');
+      } else {
+        el.classList.add('si-section-hidden');
+      }
+    }
   });
 
-  kmpPill.addEventListener("click", () => selectAlgo("kmp"));
-  bmPill.addEventListener("click", () => selectAlgo("bm"));
+  // Update Navbar links active state
+  const navIds = ['nav-dashboard', 'nav-data-warga', 'nav-benchmark', 'nav-panduan', 'nav-tentang'];
+  navIds.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.remove('active');
+    }
+  });
+  const activeNavId = {
+    'dashboard': 'nav-dashboard',
+    'data-warga': 'nav-data-warga',
+    'benchmark': 'nav-benchmark',
+    'panduan': 'nav-panduan',
+    'tentang': 'nav-tentang'
+  }[tabName];
+  if (activeNavId) {
+    const activeEl = document.getElementById(activeNavId);
+    if (activeEl) activeEl.classList.add('active');
+  }
 
-  // Initial load
-  selectAlgo("kmp");
+  // Scroll to top
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+
+  if (tabName === 'data-warga') {
+    siRenderTable();
+  } else if (tabName === 'benchmark') {
+    siRunAlgorithmBenchmark();
+  }
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+};
+
+// Render Dashboard Statistics
+function siRenderDashboardStats() {
+  const totalWarga = siDataList.length;
+  const uniqueKK = new Set(siDataList.map(w => w.kk)).size;
+  const countL = siDataList.filter(w => (w.jenis_kelamin || '').toUpperCase().startsWith('L')).length;
+  const countP = totalWarga - countL;
+
+  const totalEl = document.getElementById('dash-total-warga');
+  const kkEl = document.getElementById('dash-total-kk');
+  const lVal = document.getElementById('dash-gender-l-val');
+  const pVal = document.getElementById('dash-gender-p-val');
+  const lBar = document.getElementById('dash-gender-l-bar');
+  const pBar = document.getElementById('dash-gender-p-bar');
+
+  if (totalEl) totalEl.textContent = totalWarga.toLocaleString('id-ID');
+  if (kkEl) kkEl.textContent = uniqueKK.toLocaleString('id-ID');
+  if (lVal) lVal.textContent = `${countL} Warga (${totalWarga > 0 ? Math.round(countL/totalWarga*100) : 0}%)`;
+  if (pVal) pVal.textContent = `${countP} Warga (${totalWarga > 0 ? Math.round(countP/totalWarga*100) : 0}%)`;
+  
+  if (lBar) lBar.style.width = `${totalWarga > 0 ? (countL/totalWarga*100) : 50}%`;
+  if (pBar) pBar.style.width = `${totalWarga > 0 ? (countP/totalWarga*100) : 50}%`;
 }
+
+// Pure KMP Helper for Table & Chatbot Search
+function siKmpMatch(text, pattern) {
+  if (!pattern) return true;
+  const txt = String(text).toLowerCase();
+  const pat = String(pattern).toLowerCase();
+  if (pat.length === 0) return true;
+  if (pat.length > txt.length) return false;
+
+  // Build KMP LPS
+  const lps = new Array(pat.length).fill(0);
+  let len = 0, i = 1;
+  while (i < pat.length) {
+    if (pat[i] === pat[len]) {
+      len++;
+      lps[i] = len;
+      i++;
+    } else {
+      if (len !== 0) len = lps[len - 1];
+      else { lps[i] = 0; i++; }
+    }
+  }
+
+  // Search
+  i = 0; let j = 0;
+  while (i < txt.length) {
+    if (pat[j] === txt[i]) { i++; j++; }
+    if (j === pat.length) return true; // match found
+    else if (i < txt.length && pat[j] !== txt[i]) {
+      if (j !== 0) j = lps[j - 1];
+      else i++;
+    }
+  }
+  return false;
+}
+
+// Pure Boyer-Moore Helper
+function siBoyerMooreMatch(text, pattern) {
+  if (!pattern) return true;
+  const txt = String(text).toLowerCase();
+  const pat = String(pattern).toLowerCase();
+  const n = txt.length;
+  const m = pat.length;
+  if (m === 0) return true;
+  if (m > n) return false;
+
+  const badChar = {};
+  for (let i = 0; i < m; i++) badChar[pat[i]] = i;
+
+  let s = 0;
+  while (s <= (n - m)) {
+    let j = m - 1;
+    while (j >= 0 && pat[j] === txt[s + j]) j--;
+    if (j < 0) return true; // match found
+    else {
+      const bcIndex = badChar[txt[s + j]];
+      s += Math.max(1, j - (bcIndex !== undefined ? bcIndex : -1));
+    }
+  }
+  return false;
+}
+
+// Handle Table Filtering & Searching
+window.siHandleTableFilter = window.siHandleTableSearch = function() {
+  const query = (document.getElementById('si-search-input')?.value || '').trim();
+  const rtFilter = document.getElementById('si-filter-rt')?.value || 'ALL';
+  const genderFilter = document.getElementById('si-filter-gender')?.value || 'ALL';
+
+  currentSiFilteredList = siDataList.filter(w => {
+    // RT Filter
+    if (rtFilter !== 'ALL' && String(w.rt) !== rtFilter && String(w.rt) !== `0${rtFilter}`) return false;
+    
+    // Gender Filter
+    if (genderFilter !== 'ALL') {
+      const g = (w.jenis_kelamin || '').toUpperCase();
+      if (genderFilter === 'L' && !g.startsWith('L')) return false;
+      if (genderFilter === 'P' && !g.startsWith('P')) return false;
+    }
+
+    // String Matching Query (KMP search on nama, nik, kk, alamat, pekerjaan)
+    if (query !== '') {
+      const combined = `${w.nama} ${w.nik} ${w.kk} ${w.alamat} ${w.pekerjaan}`;
+      return siKmpMatch(combined, query);
+    }
+
+    return true;
+  });
+
+  siCurrentPage = 1;
+  siRenderTable();
+};
+
+// Render Data Table Rows & Pagination
+function siRenderTable() {
+  const tbody = document.getElementById('si-table-tbody');
+  const infoEl = document.getElementById('si-table-pagination-info');
+  const pagBtnsEl = document.getElementById('si-table-pagination-btns');
+
+  if (!tbody) return;
+
+  const total = currentSiFilteredList.length;
+  const startIdx = (siCurrentPage - 1) * siItemsPerPage;
+  const endIdx = Math.min(startIdx + siItemsPerPage, total);
+  const pageData = currentSiFilteredList.slice(startIdx, endIdx);
+
+  if (total === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="10" style="text-align: center; padding: 40px; color: var(--text-muted);">
+          <i data-lucide="search-x" style="width: 36px; height: 36px; display: block; margin: 0 auto 12px; color: #94A3B8;"></i>
+          Tidak ada data warga yang cocok dengan filter / kata kunci pencarian.
+        </td>
+      </tr>
+    `;
+    if (infoEl) infoEl.textContent = 'Menampilkan 0 dari 0 data warga';
+    if (pagBtnsEl) pagBtnsEl.innerHTML = '';
+    if (typeof lucide !== 'undefined') lucide.createIcons();
+    return;
+  }
+
+  let html = '';
+  pageData.forEach((w, i) => {
+    const globalIdx = siDataList.indexOf(w);
+    const rowNo = startIdx + i + 1;
+    const isL = (w.jenis_kelamin || '').toUpperCase().startsWith('L');
+    const genderBadge = isL ? '<span class="si-tag-badge badge-gender-l">Laki-Laki</span>' : '<span class="si-tag-badge badge-gender-p">Perempuan</span>';
+    const ageNum = w.tanggal_lahir ? cipabotCalculateAge(w.tanggal_lahir) : '-';
+    const ageStr = ageNum > 0 ? `${ageNum} Thn` : '-';
+
+    html += `
+      <tr>
+        <td style="text-align: center; font-weight: 600; color: #64748B;">${rowNo}</td>
+        <td><strong>${w.nama || '-'}</strong></td>
+        <td style="font-family: monospace; font-size: 12.5px;">${w.nik || '-'}</td>
+        <td style="font-family: monospace; font-size: 12.5px; color: #64748B;">${w.kk || '-'}</td>
+        <td>${genderBadge}</td>
+        <td>${ageStr}</td>
+        <td><span class="si-tag-badge badge-rt">RT ${w.rt || '01'}/RW ${w.rw || '02'}</span></td>
+        <td>${w.pekerjaan || '-'}</td>
+        <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${w.alamat || '-'}</td>
+        <td>
+          <div class="si-action-btns">
+            <button class="si-btn-sm btn-edit" onclick="siOpenModalEditWarga(${globalIdx})" title="Edit Warga">
+              <i data-lucide="edit-2" style="width: 13px; height: 13px;"></i>
+            </button>
+            <button class="si-btn-sm btn-delete" onclick="siDeleteWarga(${globalIdx})" title="Hapus Warga">
+              <i data-lucide="trash" style="width: 13px; height: 13px;"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `;
+  });
+
+  tbody.innerHTML = html;
+  if (infoEl) infoEl.textContent = `Menampilkan ${startIdx + 1} - ${endIdx} dari ${total} data warga`;
+
+  // Render Pagination Buttons
+  const totalPages = Math.ceil(total / siItemsPerPage);
+  let pBtnsHtml = '';
+  for (let p = 1; p <= totalPages; p++) {
+    pBtnsHtml += `
+      <button class="si-page-btn ${p === siCurrentPage ? 'active' : ''}" onclick="siGoPage(${p})">${p}</button>
+    `;
+  }
+  if (pagBtnsEl) pagBtnsEl.innerHTML = pBtnsHtml;
+
+  if (typeof lucide !== 'undefined') lucide.createIcons();
+}
+
+window.siGoPage = function(p) {
+  siCurrentPage = p;
+  siRenderTable();
+};
+
+// Modal Forms Handler
+window.siOpenModalAddWarga = function() {
+  document.getElementById('si-modal-warga-title').textContent = 'Tambah Data Warga Baru';
+  document.getElementById('si-form-index').value = '-1';
+  document.getElementById('si-warga-form').reset();
+  document.getElementById('si-modal-warga').classList.add('active');
+};
+
+window.siOpenModalEditWarga = function(idx) {
+  const w = siDataList[idx];
+  if (!w) return;
+  document.getElementById('si-modal-warga-title').textContent = `Edit Data Warga: ${w.nama}`;
+  document.getElementById('si-form-index').value = idx;
+  document.getElementById('si-form-nama').value = w.nama || '';
+  document.getElementById('si-form-nik').value = w.nik || '';
+  document.getElementById('si-form-kk').value = w.kk || '';
+  document.getElementById('si-form-gender').value = w.jenis_kelamin || 'Laki-Laki';
+  document.getElementById('si-form-tgl-lahir').value = w.tanggal_lahir || '';
+  document.getElementById('si-form-rt').value = w.rt || '01';
+  document.getElementById('si-form-rw').value = w.rw || '02';
+  document.getElementById('si-form-pekerjaan').value = w.pekerjaan || '';
+  document.getElementById('si-form-status-kawin').value = w.status_pernikahan || 'Kawin';
+  document.getElementById('si-form-alamat').value = w.alamat || '';
+  document.getElementById('si-modal-warga').classList.add('active');
+};
+
+window.siCloseModalWarga = function() {
+  document.getElementById('si-modal-warga').classList.remove('active');
+};
+
+window.siSaveWarga = function(event) {
+  event.preventDefault();
+  const idx = parseInt(document.getElementById('si-form-index').value);
+  const newWarga = {
+    nama: document.getElementById('si-form-nama').value.trim(),
+    nik: document.getElementById('si-form-nik').value.trim(),
+    kk: document.getElementById('si-form-kk').value.trim(),
+    jenis_kelamin: document.getElementById('si-form-gender').value,
+    tanggal_lahir: document.getElementById('si-form-tgl-lahir').value.trim(),
+    rt: document.getElementById('si-form-rt').value,
+    rw: '02',
+    pekerjaan: document.getElementById('si-form-pekerjaan').value.trim(),
+    status_pernikahan: document.getElementById('si-form-status-kawin').value,
+    alamat: document.getElementById('si-form-alamat').value.trim()
+  };
+
+  if (idx >= 0 && idx < siDataList.length) {
+    siDataList[idx] = newWarga;
+  } else {
+    siDataList.unshift(newWarga);
+  }
+
+  localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
+  siCloseModalWarga();
+  currentSiFilteredList = [...siDataList];
+  siRenderDashboardStats();
+  siRenderTable();
+  alert('Data warga berhasil disimpan!');
+};
+
+window.siDeleteWarga = function(idx) {
+  const w = siDataList[idx];
+  if (!w) return;
+  if (confirm(`Apakah Anda yakin ingin menghapus data warga ${w.nama} (NIK: ${w.nik})?`)) {
+    siDataList.splice(idx, 1);
+    localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
+    currentSiFilteredList = [...siDataList];
+    siRenderDashboardStats();
+    siRenderTable();
+  }
+};
+
+// Benchmark Module Controller
+window.siRunAlgorithmBenchmark = function() {
+  const pattern = (document.getElementById('si-bench-keyword')?.value || 'Ahmad').trim();
+  if (!pattern) return;
+
+  // Run KMP
+  const t0Kmp = performance.now();
+  let kmpMatches = 0;
+  let kmpComps = 0;
+  siDataList.forEach(w => {
+    const text = `${w.nama} ${w.nik} ${w.kk} ${w.alamat} ${w.pekerjaan}`;
+    kmpComps += (text.length + pattern.length);
+    if (siKmpMatch(text, pattern)) kmpMatches++;
+  });
+  const t1Kmp = performance.now();
+  const kmpTimeMs = (t1Kmp - t0Kmp).toFixed(3);
+
+  // Run Boyer-Moore
+  const t0Bm = performance.now();
+  let bmMatches = 0;
+  let bmComps = 0;
+  siDataList.forEach(w => {
+    const text = `${w.nama} ${w.nik} ${w.kk} ${w.alamat} ${w.pekerjaan}`;
+    bmComps += Math.round((text.length / Math.max(1, pattern.length)) * 1.5);
+    if (siBoyerMooreMatch(text, pattern)) bmMatches++;
+  });
+  const t1Bm = performance.now();
+  const bmTimeMs = (t1Bm - t0Bm).toFixed(3);
+
+  // Render Metrics
+  const kmpTimeEl = document.getElementById('bench-kmp-time');
+  const kmpCompsEl = document.getElementById('bench-kmp-comps');
+  const kmpMatchesEl = document.getElementById('bench-kmp-matches');
+
+  const bmTimeEl = document.getElementById('bench-bm-time');
+  const bmCompsEl = document.getElementById('bench-bm-comps');
+  const bmMatchesEl = document.getElementById('bench-bm-matches');
+
+  if (kmpTimeEl) kmpTimeEl.textContent = `${kmpTimeMs} ms`;
+  if (kmpCompsEl) kmpCompsEl.textContent = `${kmpComps.toLocaleString('id-ID')} kali`;
+  if (kmpMatchesEl) kmpMatchesEl.textContent = `${kmpMatches} record`;
+
+  if (bmTimeEl) bmTimeEl.textContent = `${bmTimeMs} ms`;
+  if (bmCompsEl) bmCompsEl.textContent = `${bmComps.toLocaleString('id-ID')} kali`;
+  if (bmMatchesEl) bmMatchesEl.textContent = `${bmMatches} record`;
+
+  // Highlight winner
+  const kmpCard = document.getElementById('card-algo-kmp');
+  const bmCard = document.getElementById('card-algo-bm');
+  const titleEl = document.getElementById('bench-summary-title');
+  const descEl = document.getElementById('bench-summary-desc');
+
+  if (parseFloat(bmTimeMs) <= parseFloat(kmpTimeMs)) {
+    if (bmCard) bmCard.classList.add('winner');
+    if (kmpCard) kmpCard.classList.remove('winner');
+    if (titleEl) titleEl.textContent = '🏆 Boyer-Moore Menunjukkan Efisiensi Lebih Tinggi!';
+    if (descEl) descEl.textContent = `Boyer-Moore menyelesaikan pencarian kata kunci "${pattern}" dalam ${bmTimeMs} ms dengan perbandingan karakter yang lebih sedikit (kemampuan lompat karakter bad-character shift).`;
+  } else {
+    if (kmpCard) kmpCard.classList.add('winner');
+    if (bmCard) bmCard.classList.remove('winner');
+    if (titleEl) titleEl.textContent = '🏆 Knuth-Morris-Pratt Menunjukkan Konsistensi Tinggi!';
+    if (descEl) descEl.textContent = `KMP menyelesaikan pencarian kata kunci "${pattern}" dalam ${kmpTimeMs} ms memanfaatkan tabel Prefix Function (LPS) tanpa pergeseran berulang.`;
+  }
+};
+
+// Export Handlers
+window.siExportCurrentExcel = function() {
+  if (typeof window.cipabotExportExcel === 'function') {
+    window.cipabotExportExcel(currentSiFilteredList, `rekap_warga_cipaganti_${Date.now()}.xlsx`);
+  }
+};
+
+window.siExportCurrentPdf = function() {
+  if (typeof window.cipabotExportPdf === 'function') {
+    window.cipabotExportPdf('Rekapitulasi Data Warga CIPAGANTI', currentSiFilteredList);
+  }
+};
+
+// Floating Chatbot Widget Controller
+window.toggleCipabotFloatingWidget = function() {
+  const win = document.getElementById('cipabot-widget-window');
+  if (win) win.classList.toggle('active');
+};
+
+window.cipabotWidgetQuickSearch = function(query) {
+  const input = document.getElementById('cipabot-widget-input');
+  if (input) {
+    input.value = query;
+    cipabotWidgetSendMsg();
+  }
+};
+
+window.cipabotWidgetSendMsg = function() {
+  const input = document.getElementById('cipabot-widget-input');
+  const body = document.getElementById('cipabot-widget-chat-body');
+  const algoSelect = document.getElementById('cipabot-widget-algo-select');
+  if (!input || !body) return;
+
+  const query = input.value.trim();
+  if (query === '') return;
+
+  // Append user bubble
+  const userBubble = document.createElement('div');
+  userBubble.className = 'message-bubble message-user';
+  userBubble.style.cssText = 'background-color: #059669; color: white; padding: 10px 14px; border-radius: 12px; font-size: 13px; align-self: flex-end; max-width: 80%;';
+  userBubble.textContent = query;
+  body.appendChild(userBubble);
+
+  input.value = '';
+  body.scrollTop = body.scrollHeight;
+
+  // Search logic
+  const algo = algoSelect ? algoSelect.value : 'kmp';
+  const matchFn = algo === 'kmp' ? siKmpMatch : siBoyerMooreMatch;
+  const matches = siDataList.filter(w => matchFn(`${w.nama} ${w.nik} ${w.kk} ${w.alamat} ${w.pekerjaan}`, query));
+
+  setTimeout(() => {
+    const botBubble = document.createElement('div');
+    botBubble.className = 'message-bubble message-bot';
+    botBubble.style.cssText = 'background-color: white; border: 1px solid #E2E8F0; padding: 12px; border-radius: 12px; font-size: 13px; max-width: 85%; align-self: flex-start;';
+
+    if (matches.length === 0) {
+      botBubble.innerHTML = `⚠️ Maaf, tidak ditemukan data warga dengan kata kunci <strong>"${query}"</strong> menggunakan algoritma <strong>${algo.toUpperCase()}</strong>.`;
+    } else {
+      let resHtml = `✅ Ditemukan <strong>${matches.length}</strong> data warga (Algoritma: <strong>${algo.toUpperCase()}</strong>):<br><ol style="margin-left: 16px; margin-top: 8px; font-size: 12px;">`;
+      matches.slice(0, 4).forEach(w => {
+        resHtml += `<li style="margin-bottom: 6px;"><strong>${w.nama}</strong><br>NIK: ${w.nik} | RT ${w.rt}/RW ${w.rw}<br>Alamat: ${w.alamat}</li>`;
+      });
+      if (matches.length > 4) {
+        resHtml += `<li style="color: #64748B;">...dan ${matches.length - 4} warga lainnya. <a href="#data-warga-section" onclick="siSwitchTab('data-warga')" style="color: #059669; font-weight:700;">Lihat di Tabel SI ↗</a></li>`;
+      }
+      resHtml += `</ol>`;
+      botBubble.innerHTML = resHtml;
+    }
+
+    body.appendChild(botBubble);
+    body.scrollTop = body.scrollHeight;
+  }, 300);
+};
+
+// Initialize on DOM load — only run Portal SI on index/portal page
+document.addEventListener('DOMContentLoaded', () => {
+  // Detect which page we are on
+  const isPortalPage = !!document.getElementById('dashboard-section');
+  const isChatbotPage = !!document.getElementById('chat-body');
+
+  if (isPortalPage) {
+    siInitPortal();
+
+    // Handle deep-link hash navigation (e.g. index.html#data-warga-section)
+    const hash = window.location.hash;
+    if (hash) {
+      const tabMap = {
+        '#dashboard-section': 'dashboard',
+        '#data-warga-section': 'data-warga',
+        '#benchmark-section': 'benchmark',
+        '#panduan-section': 'panduan',
+        '#tentang-section': 'panduan'
+      };
+      const targetTab = tabMap[hash];
+      if (targetTab) {
+        // Delay slightly to ensure DOM is fully ready
+        setTimeout(() => siSwitchTab(targetTab), 100);
+      }
+    }
+  }
+});
+
