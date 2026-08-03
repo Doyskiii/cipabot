@@ -4168,18 +4168,40 @@ function siInitPortal() {
   if (saved) {
     try {
       siDataList = JSON.parse(saved);
+      currentSiFilteredList = [...siDataList];
+      siRenderDashboardStats();
+      siRenderTable();
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+      return;
     } catch(e) {
-      siDataList = [...siDefaultWargaDataset];
+      console.warn("Parsing local storage warga data failed, fetching default dataset...");
     }
-  } else {
-    siDataList = [...siDefaultWargaDataset];
-    localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
   }
 
-  currentSiFilteredList = [...siDataList];
-  siRenderDashboardStats();
-  siRenderTable();
-  if (typeof lucide !== 'undefined') lucide.createIcons();
+  // Fetch dataset_warga.json from data/ folder automatically
+  fetch('data/dataset_warga.json')
+    .then(res => res.json())
+    .then(data => {
+      if (Array.isArray(data) && data.length > 0) {
+        siDataList = data;
+        localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
+      } else {
+        siDataList = [...siDefaultWargaDataset];
+        localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
+      }
+      currentSiFilteredList = [...siDataList];
+      siRenderDashboardStats();
+      siRenderTable();
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    })
+    .catch(err => {
+      siDataList = [...siDefaultWargaDataset];
+      localStorage.setItem("si_warga_data", JSON.stringify(siDataList));
+      currentSiFilteredList = [...siDataList];
+      siRenderDashboardStats();
+      siRenderTable();
+      if (typeof lucide !== 'undefined') lucide.createIcons();
+    });
 }
 
 // Tab Switcher Controller
