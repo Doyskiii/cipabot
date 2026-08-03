@@ -2446,3 +2446,235 @@ a.btn-logout:hover {
   gap: 24px;
 }
 
+/* ==========================================================================
+   MOBILE RESPONSIVE — Hamburger + Drawer Menu
+   ========================================================================== */
+
+/* Hamburger button — hidden on desktop */
+.hamburger-btn {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  width: 40px;
+  height: 40px;
+  background: none;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 8px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.hamburger-btn span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background-color: var(--text-main);
+  border-radius: 2px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: center;
+}
+
+.hamburger-btn.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger-btn.open span:nth-child(2) {
+  opacity: 0;
+  transform: scaleX(0);
+}
+.hamburger-btn.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Dark overlay when drawer open */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 200;
+  backdrop-filter: blur(2px);
+  animation: fadeIn 0.2s ease;
+}
+
+.mobile-menu-overlay.active {
+  display: block;
+}
+
+/* Mobile Drawer */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: min(320px, 85vw);
+  height: 100vh;
+  background: white;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.15);
+  transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow-y: auto;
+}
+
+.mobile-menu.active {
+  right: 0;
+}
+
+.mobile-menu-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  background: #F0FDF4;
+  flex-shrink: 0;
+}
+
+.mobile-menu-nav {
+  display: flex;
+  flex-direction: column;
+  padding: 12px 12px;
+  gap: 4px;
+  flex: 1;
+}
+
+.mobile-nav-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 16px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-main);
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.mobile-nav-item:hover, .mobile-nav-item:active {
+  background-color: #F0FDF4;
+  color: #047857;
+}
+
+/* ---------------------------------------------------------------- */
+/* RESPONSIVE BREAKPOINTS                                            */
+/* ---------------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  /* Hide desktop nav-links, show hamburger */
+  .nav-links {
+    display: none !important;
+  }
+
+  .btn-add-mobile {
+    display: none !important;
+  }
+
+  .hamburger-btn {
+    display: flex;
+  }
+
+  /* Fix navbar height for mobile */
+  .navbar {
+    height: 62px;
+  }
+
+  /* Logo title smaller */
+  .logo-title {
+    font-size: 15px;
+  }
+  .logo-subtitle {
+    font-size: 9px;
+  }
+
+  /* Main container padding */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* SI page title smaller */
+  .si-page-title {
+    font-size: 22px;
+  }
+
+  /* Stats grid — 2 columns on tablet */
+  .si-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Table scroll on mobile */
+  .si-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Benchmark comparison — stack on mobile */
+  .si-benchmark-comparison-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Form grid — 1 col */
+  .si-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .si-form-group.full-width {
+    grid-column: span 1;
+  }
+
+  /* Modal width */
+  .si-modal-box {
+    width: calc(100vw - 32px);
+    max-height: 90vh;
+  }
+
+  /* Tentang section grid — stack */
+  #tentang-section > div > div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 600px) {
+  /* Stats — single column on small phones */
+  .si-stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .si-stat-card {
+    padding: 14px;
+  }
+
+  .si-stat-value {
+    font-size: 24px;
+  }
+
+  /* Chat widget full-width on mobile */
+  .chat-widget-window {
+    width: calc(100vw - 32px);
+    right: -8px;
+  }
+
+  /* Welcome card padding */
+  .welcome-container-card {
+    padding: 24px 18px;
+  }
+
+  .welcome-title {
+    font-size: 20px;
+  }
+
+  /* Chatbot sidebar — narrower on mobile */
+  .app-sidebar {
+    width: 240px;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

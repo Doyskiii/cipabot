@@ -32,23 +32,69 @@
           <span class="logo-subtitle">Sistem Informasi Pendataan & Pencarian Data Warga</span>
         </div>
       </div>
-      <ul class="nav-links">
-        <li><a href="#dashboard-section" class="nav-link active" id="nav-dashboard" onclick="siSwitchTab('dashboard'); return false;">Dashboard</a></li>
-        <li><a href="#data-warga-section" class="nav-link" id="nav-data-warga" onclick="siSwitchTab('data-warga'); return false;">Data Warga</a></li>
-        <li><a href="#benchmark-section" class="nav-link" id="nav-benchmark" onclick="siSwitchTab('benchmark'); return false;">Uji KMP &amp; BM</a></li>
+      <ul class="nav-links" id="nav-links-menu">
+        <li><a href="#" class="nav-link active" id="nav-dashboard" onclick="siSwitchTab('dashboard'); closeMobileMenu(); return false;">Dashboard</a></li>
+        <li><a href="#" class="nav-link" id="nav-data-warga" onclick="siSwitchTab('data-warga'); closeMobileMenu(); return false;">Data Warga</a></li>
+        <li><a href="#" class="nav-link" id="nav-benchmark" onclick="siSwitchTab('benchmark'); closeMobileMenu(); return false;">Uji KMP &amp; BM</a></li>
         <li><a href="chatbot.html" class="nav-link" style="display: inline-flex; align-items: center; gap: 5px; color: #059669 !important; font-weight: 700;"><i data-lucide="bot" style="width: 14px; height: 14px;"></i> Chatbot AI</a></li>
-        <li><a href="#panduan-section" class="nav-link" id="nav-panduan" onclick="siSwitchTab('panduan'); return false;">Panduan</a></li>
-        <li><a href="#tentang-section" class="nav-link" id="nav-tentang" onclick="siSwitchTab('tentang'); return false;">Tentang</a></li>
+        <li><a href="#" class="nav-link" id="nav-panduan" onclick="siSwitchTab('panduan'); closeMobileMenu(); return false;">Panduan</a></li>
+        <li><a href="#" class="nav-link" id="nav-tentang" onclick="siSwitchTab('tentang'); closeMobileMenu(); return false;">Tentang</a></li>
       </ul>
       <div class="nav-actions">
-        <button class="btn btn-primary" onclick="siOpenModalAddWarga()" style="padding: 8px 16px; font-size: 13.5px; background-color: #059669;">
+        <button class="btn btn-primary btn-add-mobile" onclick="siOpenModalAddWarga()" style="padding: 8px 16px; font-size: 13.5px; background-color: #059669;">
           <i data-lucide="user-plus" style="width: 16px; height: 16px;"></i>
           + Data Warga
         </button>
         <div class="user-avatar" title="Pengurus / Admin: Gilang Ramadhan" style="background: linear-gradient(135deg, #059669, #10B981); color: white; font-weight: 800; font-size: 13px;">GR</div>
+        <!-- Hamburger Toggle Button -->
+        <button class="hamburger-btn" id="hamburger-btn" onclick="toggleMobileMenu()" aria-label="Menu" aria-expanded="false">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </nav>
+
+  <!-- Mobile Drawer Menu -->
+  <div class="mobile-menu-overlay" id="mobile-menu-overlay" onclick="closeMobileMenu()"></div>
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-header">
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="logo.jpg" alt="Logo" style="width: 32px; height: 32px; border-radius: 8px; object-fit: cover;">
+        <div>
+          <div style="font-size: 14px; font-weight: 800; color: #047857;">SiWarga CIPAGANTI</div>
+          <div style="font-size: 10px; color: #64748B;">Sistem Informasi Pendataan Warga</div>
+        </div>
+      </div>
+      <button onclick="closeMobileMenu()" style="background: none; border: none; cursor: pointer; color: #64748B; padding: 4px;">
+        <i data-lucide="x" style="width: 22px; height: 22px;"></i>
+      </button>
+    </div>
+    <nav class="mobile-menu-nav">
+      <a href="#" class="mobile-nav-item" onclick="siSwitchTab('dashboard'); closeMobileMenu(); return false;">
+        <i data-lucide="layout-dashboard" style="width: 18px; height: 18px; color: #059669;"></i> Dashboard
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="siSwitchTab('data-warga'); closeMobileMenu(); return false;">
+        <i data-lucide="table" style="width: 18px; height: 18px; color: #2563EB;"></i> Data Warga (CRUD)
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="siSwitchTab('benchmark'); closeMobileMenu(); return false;">
+        <i data-lucide="cpu" style="width: 18px; height: 18px; color: #9333EA;"></i> Uji KMP vs Boyer-Moore
+      </a>
+      <a href="chatbot.html" class="mobile-nav-item" style="color: #047857; font-weight: 700;">
+        <i data-lucide="bot" style="width: 18px; height: 18px; color: #059669;"></i> Chatbot AI (Fullscreen)
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="siSwitchTab('panduan'); closeMobileMenu(); return false;">
+        <i data-lucide="book-open" style="width: 18px; height: 18px; color: #D97706;"></i> Panduan Sistem
+      </a>
+      <a href="#" class="mobile-nav-item" onclick="siSwitchTab('tentang'); closeMobileMenu(); return false;">
+        <i data-lucide="info" style="width: 18px; height: 18px; color: #64748B;"></i> Tentang Penelitian
+      </a>
+    </nav>
+    <div style="padding: 16px 20px; border-top: 1px solid #E2E8F0;">
+      <button onclick="siOpenModalAddWarga(); closeMobileMenu();" style="width: 100%; background: linear-gradient(135deg, #059669, #10B981); color: white; border: none; border-radius: 12px; padding: 14px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;">
+        <i data-lucide="user-plus" style="width: 18px; height: 18px;"></i> + Tambah Data Warga
+      </button>
+    </div>
+  </div>
 
   <!-- MAIN PORTAL CONTAINER -->
   <main class="container">
@@ -687,6 +733,43 @@
           .catch(err => console.warn('[SiWarga PWA] SW failed:', err));
       });
     }
+  </script>
+  <!-- Mobile Menu JavaScript -->
+  <script>
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const btn = document.getElementById('hamburger-btn');
+      const isOpen = menu.classList.contains('active');
+
+      if (isOpen) {
+        closeMobileMenu();
+      } else {
+        menu.classList.add('active');
+        overlay.classList.add('active');
+        btn.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden'; // prevent scroll
+        if (typeof lucide !== 'undefined') lucide.createIcons();
+      }
+    }
+
+    function closeMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      const overlay = document.getElementById('mobile-menu-overlay');
+      const btn = document.getElementById('hamburger-btn');
+
+      menu.classList.remove('active');
+      overlay.classList.remove('active');
+      btn.classList.remove('open');
+      btn.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    // Close on ESC key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeMobileMenu();
+    });
   </script>
 
 </body>
